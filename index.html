@@ -1,0 +1,4575 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Calcio: Capítulo 2 - La Vida en el Océano</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&family=Fredoka:wght@600;700;800;900&family=Nunito:wght@800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --neon-cyan: #00d9ff;
+      --neon-blue: #0077fe;
+      --gold-star: #ffcc00;
+      --chon-pink: #ff2a85;
+      --bg-dark: #030a1c;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+      touch-action: none;
+      font-family: 'Fredoka', 'Nunito', sans-serif;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-dark);
+      color: #fff;
+    }
+
+    #gameCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      display: block;
+    }
+
+    /* ==========================================================================
+       PANTALLA DE MENÚ PRINCIPAL (ESTILO PREMIUM SCI-POP)
+       ========================================================================== */
+    .menu-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 50;
+      background: radial-gradient(circle at 50% 35%, rgba(6, 26, 64, 0.96) 0%, rgba(2, 8, 24, 0.98) 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 20px;
+      transition: opacity 0.3s;
+    }
+    .menu-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .menu-card {
+      background: linear-gradient(180deg, #0a2a62 0%, #031333 100%);
+      border: 4px solid var(--neon-cyan);
+      border-radius: 32px;
+      padding: 28px 22px;
+      width: 100%;
+      max-width: 390px;
+      box-shadow: 0 0 35px rgba(0, 217, 255, 0.55), inset 0 2px 6px rgba(255, 255, 255, 0.3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      text-align: center;
+      position: relative;
+    }
+
+    .book-subtag {
+      background: rgba(0, 217, 255, 0.15);
+      border: 1.5px solid var(--neon-cyan);
+      color: var(--neon-cyan);
+      font-weight: 900;
+      font-size: 0.8rem;
+      padding: 4px 16px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .menu-main-title {
+      font-size: 2.3rem;
+      font-weight: 900;
+      color: #ffffff;
+      text-shadow: 0 0 20px rgba(0, 217, 255, 0.9), 0 4px 0 #002244;
+      line-height: 1.05;
+      letter-spacing: -0.5px;
+    }
+
+    .chapter-hero-banner {
+      background: linear-gradient(90deg, rgba(0, 119, 254, 0.3) 0%, rgba(0, 217, 255, 0.4) 50%, rgba(0, 119, 254, 0.3) 100%);
+      border: 2px solid var(--neon-cyan);
+      border-radius: 20px;
+      padding: 8px 18px;
+      color: #ffffff;
+      font-weight: 900;
+      font-size: 1.05rem;
+      text-shadow: 0 0 10px rgba(0, 217, 255, 0.8);
+      width: 100%;
+      box-shadow: 0 0 14px rgba(0, 217, 255, 0.3);
+    }
+
+    .menu-book-excerpt {
+      background: rgba(0, 15, 40, 0.7);
+      border-left: 3px solid var(--neon-cyan);
+      border-radius: 0 14px 14px 0;
+      padding: 12px 14px;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      color: #d8eaff;
+      text-align: left;
+    }
+
+    .menu-book-excerpt b {
+      color: var(--neon-cyan);
+    }
+
+    .menu-stats-row {
+      display: flex;
+      justify-content: space-around;
+      width: 100%;
+      background: rgba(2, 10, 28, 0.6);
+      border: 1.5px solid rgba(0, 217, 255, 0.3);
+      border-radius: 18px;
+      padding: 8px 12px;
+      font-size: 0.88rem;
+      font-weight: 800;
+    }
+
+    .btn-menu-action {
+      width: 100%;
+      padding: 16px;
+      border-radius: 20px;
+      border: 3px solid #ffffff;
+      background: linear-gradient(180deg, var(--neon-cyan) 0%, #0066ee 100%);
+      box-shadow: 0 0 20px rgba(0, 217, 255, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.6);
+      color: #ffffff;
+      font-size: 1.25rem;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-shadow: 0 2px 0 #003388;
+      transition: transform 0.1s;
+    }
+    .btn-menu-action:active { transform: scale(0.97); }
+
+    /* ==========================================================================
+       HUD DURANTE EL JUEGO (ENDLESS RUNNER FLUIDO)
+       ========================================================================== */
+    .runner-hud {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 12px 14px;
+      padding-top: max(12px, env(safe-area-inset-top));
+      padding-bottom: max(14px, env(safe-area-inset-bottom));
+    }
+
+    .hud-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      pointer-events: auto;
+      gap: 8px;
+    }
+
+    /* PÍLDORA DEL CAPÍTULO 2 */
+    .chapter-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(180deg, #071f45 0%, #031028 100%);
+      border: 3px solid var(--neon-cyan);
+      border-radius: 40px;
+      padding: 4px 14px 4px 6px;
+      box-shadow: 0 0 14px rgba(0, 217, 255, 0.45);
+    }
+
+    .atom-icon-wrap {
+      width: 34px;
+      height: 34px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .atom-core-circle {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #ffffff 0%, var(--neon-cyan) 65%, #0055aa 100%);
+      box-shadow: 0 0 10px var(--neon-cyan);
+      z-index: 2;
+    }
+
+    .atom-ring {
+      position: absolute;
+      width: 32px;
+      height: 12px;
+      border: 2px solid var(--neon-cyan);
+      border-radius: 50%;
+    }
+    .atom-ring.r1 { transform: rotate(25deg); }
+    .atom-ring.r2 { transform: rotate(-35deg); }
+    .atom-ring.r3 { transform: rotate(80deg); }
+
+    .chapter-title-text {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #ffffff;
+      text-shadow: 0 0 8px rgba(0, 217, 255, 0.8);
+    }
+
+    .hud-right-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .score-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(180deg, #071f45 0%, #031028 100%);
+      border: 3px solid var(--neon-cyan);
+      border-radius: 30px;
+      padding: 6px 12px;
+      font-weight: 900;
+      font-size: 1rem;
+      color: #ffffff;
+      box-shadow: 0 0 12px rgba(0, 217, 255, 0.35);
+    }
+
+    .btn-hud-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, #0088ff 0%, #0044aa 100%);
+      border: 3px solid var(--neon-cyan);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-size: 1.15rem;
+      cursor: pointer;
+    }
+
+    /* BARRA DE MISIÓN CON MATRAZ QUÍMICO */
+    .mission-hud-box {
+      margin-top: 6px;
+      background: linear-gradient(180deg, rgba(5, 20, 50, 0.94) 0%, rgba(2, 10, 26, 0.96) 100%);
+      border: 3px solid var(--neon-cyan);
+      border-radius: 20px;
+      padding: 8px 12px;
+      box-shadow: 0 0 16px rgba(0, 217, 255, 0.3);
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .flask-badge {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #0055bb 0%, #001f55 100%);
+      border: 2px solid var(--neon-cyan);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+
+    .mission-info-col {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-grow: 1;
+    }
+
+    .mission-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .distance-counter {
+      font-size: 0.95rem;
+      font-weight: 900;
+      color: var(--neon-cyan);
+    }
+
+    .track-bg {
+      width: 100%;
+      height: 8px;
+      background: #020919;
+      border: 2px solid #0055aa;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .track-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #0066cc 0%, var(--neon-cyan) 80%, #ffffff 100%);
+      border-radius: 6px;
+      box-shadow: 0 0 8px var(--neon-cyan);
+    }
+
+    /* PÍLDORA GUÍA INFERIOR CON LA 'i' */
+    .bottom-guide-pill {
+      align-self: center;
+      background: linear-gradient(180deg, rgba(6, 22, 54, 0.95) 0%, rgba(2, 10, 28, 0.98) 100%);
+      border: 3px solid var(--neon-cyan);
+      border-radius: 35px;
+      padding: 8px 18px 8px 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 0 20px rgba(0, 217, 255, 0.4);
+      max-width: 95%;
+      pointer-events: none;
+    }
+
+    .info-circle {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, var(--neon-cyan) 0%, #0077ee 100%);
+      border: 2px solid #ffffff;
+      color: #020b1e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 0.9rem;
+      font-style: italic;
+      flex-shrink: 0;
+    }
+
+    .guide-desc {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #e2f1ff;
+      line-height: 1.3;
+    }
+
+    /* OVERLAY DE IMPACTO / GAME OVER */
+    .crash-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 50;
+      background: rgba(2, 8, 24, 0.94);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      transition: opacity 0.3s;
+    }
+    .crash-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .crash-card {
+      background: linear-gradient(180deg, #0a2656 0%, #04122e 100%);
+      border: 4px solid var(--neon-cyan);
+      border-radius: 28px;
+      padding: 24px 20px;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 0 0 30px rgba(0, 217, 255, 0.5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      text-align: center;
+    }
+
+    .btn-crash-retry {
+      width: 100%;
+      padding: 15px;
+      border-radius: 18px;
+      border: 3px solid #ffffff;
+      background: linear-gradient(180deg, #ff3366 0%, #aa0022 100%);
+      color: #fff;
+      font-size: 1.15rem;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .btn-crash-menu {
+      width: 100%;
+      padding: 14px;
+      border-radius: 18px;
+      border: 2px solid var(--neon-cyan);
+      background: rgba(0, 217, 255, 0.15);
+      color: #ffffff;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    /* SELECTOR E INDICADOR DE LAS 4 ETAPAS DEL CAPÍTULO 2 */
+    .stage-steps-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-top: 6px;
+      pointer-events: auto;
+    }
+
+    .stage-step-pill {
+      background: rgba(3, 14, 38, 0.9);
+      border: 2px solid rgba(0, 217, 255, 0.35);
+      border-radius: 12px;
+      padding: 5px 4px;
+      text-align: center;
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: #94b8e8;
+      cursor: pointer;
+      transition: all 0.2s;
+      line-height: 1.15;
+    }
+
+    .stage-step-pill.active {
+      background: linear-gradient(180deg, #0077ff 0%, #003b99 100%);
+      border-color: #ffffff;
+      color: #ffffff;
+      box-shadow: 0 0 12px rgba(0, 217, 255, 0.75);
+      transform: translateY(-1px);
+    }
+
+    .stage-step-pill.final-stage.active {
+      background: linear-gradient(180deg, #ff9e00 0%, #d04000 100%);
+      border-color: #ffe066;
+      box-shadow: 0 0 15px rgba(255, 158, 0, 0.85);
+    }
+
+    .menu-stage-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      width: 100%;
+    }
+
+    .menu-stage-btn {
+      background: rgba(4, 18, 48, 0.85);
+      border: 2px solid rgba(0, 217, 255, 0.45);
+      border-radius: 14px;
+      padding: 8px 10px;
+      color: #e2f1ff;
+      font-size: 0.8rem;
+      font-weight: 800;
+      cursor: pointer;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.15s;
+    }
+    .menu-stage-btn:hover, .menu-stage-btn:active {
+      background: rgba(0, 119, 255, 0.35);
+      border-color: #ffffff;
+      transform: scale(0.98);
+    }
+    .menu-stage-btn.highlight-crustacean {
+      border-color: #ffb703;
+      background: linear-gradient(90deg, rgba(255, 158, 0, 0.22) 0%, rgba(232, 93, 4, 0.28) 100%);
+      color: #ffe8a3;
+    }
+
+    /* ==========================================================================
+       TIENDA MÓVIL DE MEJORAS Y SKINS (100% MOBILE-FIRST)
+       ========================================================================== */
+    .menu-actions-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .btn-shop-open {
+      width: 100%;
+      padding: 13px 10px;
+      border-radius: 18px;
+      border: 2.5px solid #ffd166;
+      background: linear-gradient(180deg, #ff9e00 0%, #c84b00 100%);
+      box-shadow: 0 0 18px rgba(255, 158, 0, 0.5), inset 0 2px 3px rgba(255, 255, 255, 0.5);
+      color: #ffffff;
+      font-size: 0.98rem;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-shadow: 0 2px 0 #772200;
+    }
+    .btn-shop-open:active { transform: scale(0.97); }
+
+    .shop-modal {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 80;
+      background: rgba(2, 8, 24, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      transition: opacity 0.25s;
+    }
+    .shop-modal.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .shop-card {
+      background: linear-gradient(180deg, #082252 0%, #030e26 100%);
+      border: 3.5px solid var(--neon-cyan);
+      border-radius: 28px;
+      width: 100%;
+      max-width: 400px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      padding: 18px 16px;
+      gap: 12px;
+      box-shadow: 0 0 35px rgba(0, 217, 255, 0.5);
+    }
+
+    .shop-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .shop-wallet-pill {
+      background: rgba(2, 10, 28, 0.9);
+      border: 2px solid #ffd166;
+      border-radius: 20px;
+      padding: 5px 12px;
+      font-weight: 900;
+      font-size: 0.92rem;
+      color: #ffd166;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 0 12px rgba(255, 209, 102, 0.35);
+    }
+
+    .shop-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      background: rgba(2, 8, 22, 0.7);
+      padding: 5px;
+      border-radius: 16px;
+      border: 1.5px solid rgba(0, 217, 255, 0.3);
+    }
+
+    .shop-tab-btn {
+      padding: 9px;
+      border-radius: 12px;
+      border: none;
+      background: transparent;
+      color: #94b8e8;
+      font-weight: 900;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .shop-tab-btn.active {
+      background: linear-gradient(180deg, var(--neon-cyan) 0%, #0066dd 100%);
+      color: #ffffff;
+      text-shadow: 0 1px 0 #002b66;
+      box-shadow: 0 0 12px rgba(0, 217, 255, 0.5);
+    }
+
+    .shop-list {
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      padding-right: 2px;
+      max-height: 52vh;
+      touch-action: pan-y;
+    }
+
+    .shop-list * {
+      touch-action: pan-y;
+    }
+
+    .shop-item {
+      background: rgba(4, 16, 42, 0.9);
+      border: 2px solid rgba(0, 217, 255, 0.35);
+      border-radius: 18px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .shop-item.equipped {
+      border-color: #00ffaa;
+      background: linear-gradient(90deg, rgba(0, 255, 170, 0.14) 0%, rgba(4, 16, 42, 0.95) 100%);
+      box-shadow: 0 0 14px rgba(0, 255, 170, 0.25);
+    }
+
+    .shop-item-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-align: left;
+      flex: 1;
+    }
+
+    .shop-icon-preview {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      flex-shrink: 0;
+      border: 2.5px solid #ffffff;
+      box-shadow: 0 0 12px rgba(0, 217, 255, 0.45);
+    }
+
+    .shop-item-title {
+      font-size: 0.9rem;
+      font-weight: 900;
+      color: #ffffff;
+    }
+
+    .shop-item-desc {
+      font-size: 0.74rem;
+      color: #b8d4f8;
+      line-height: 1.25;
+      margin-top: 2px;
+    }
+
+    .shop-level-dots {
+      display: flex;
+      gap: 4px;
+      margin-top: 4px;
+    }
+
+    .lvl-dot {
+      width: 12px;
+      height: 5px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .lvl-dot.filled {
+      background: #00ffaa;
+      box-shadow: 0 0 6px #00ffaa;
+    }
+
+    .btn-buy-item {
+      padding: 8px 12px;
+      border-radius: 13px;
+      border: 2px solid #ffffff;
+      background: linear-gradient(180deg, #00d9ff 0%, #0066cc 100%);
+      color: #ffffff;
+      font-weight: 900;
+      font-size: 0.78rem;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .btn-buy-item.gold {
+      background: linear-gradient(180deg, #ffb703 0%, #d85604 100%);
+      border-color: #ffe8a3;
+    }
+    .btn-buy-item.equipped-btn {
+      background: linear-gradient(180deg, #00ffaa 0%, #008855 100%);
+      color: #011f12;
+      border-color: #ffffff;
+    }
+    .btn-buy-item:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    /* ==========================================================================
+       EXPANSIÓN VISUAL: MENÚ TRANSLÚCIDO, MISIONES, TOASTS, RESULTADOS, PAUSA
+       ========================================================================== */
+    .menu-screen {
+      background: radial-gradient(circle at 50% 30%, rgba(4, 30, 70, 0.45) 0%, rgba(2, 8, 24, 0.86) 100%);
+      padding: 12px;
+    }
+    .menu-card {
+      max-height: calc(100vh - 24px);
+      max-height: calc(100dvh - 24px);
+      overflow-y: auto;
+      background: linear-gradient(180deg, rgba(10, 42, 98, 0.86) 0%, rgba(3, 19, 51, 0.93) 100%);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      animation: cardIn 0.55s cubic-bezier(.2, 1.4, .4, 1);
+      scrollbar-width: none;
+    }
+    .menu-card::-webkit-scrollbar { display: none; }
+    .menu-card, .menu-card *, .crash-card, .crash-card *, .shop-list, .shop-list * { touch-action: pan-y; }
+
+    .menu-main-title {
+      background: linear-gradient(90deg, #ffffff 0%, #7df9ff 30%, #ffd166 55%, #ffffff 80%);
+      background-size: 300% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: none;
+      filter: drop-shadow(0 0 12px rgba(0, 217, 255, 0.85)) drop-shadow(0 3px 0 #002244);
+      animation: titleShine 5s linear infinite, floaty 3.2s ease-in-out infinite;
+    }
+    @keyframes titleShine { to { background-position: 300% 0; } }
+    @keyframes floaty { 50% { transform: translateY(-4px); } }
+    @keyframes cardIn { from { transform: scale(0.86) translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+    button { transition: transform 0.1s, filter 0.2s; }
+    button:active { transform: scale(0.95); filter: brightness(1.2); }
+
+    .missions-panel {
+      width: 100%;
+      background: rgba(2, 12, 32, 0.78);
+      border: 2px solid rgba(255, 209, 102, 0.65);
+      border-radius: 16px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      text-align: left;
+      box-shadow: 0 0 14px rgba(255, 183, 3, 0.18);
+    }
+    .missions-title {
+      font-size: 0.74rem;
+      font-weight: 900;
+      color: #ffd166;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .mission-row { display: flex; align-items: center; gap: 8px; font-size: 0.74rem; font-weight: 800; color: #e2f1ff; }
+    .mission-row .m-icon {
+      width: 26px; height: 26px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255, 209, 102, 0.15); border: 1.5px solid #ffd166;
+      font-size: 0.85rem; flex-shrink: 0;
+    }
+    .mission-row .m-body { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+    .m-bar { height: 6px; border-radius: 4px; background: #020919; overflow: hidden; border: 1px solid #1e3a5f; }
+    .m-bar > div { height: 100%; background: linear-gradient(90deg, #ffb703, #ffe066); box-shadow: 0 0 6px #ffb703; }
+    .m-reward { font-size: 0.68rem; color: #ffd166; font-weight: 900; white-space: nowrap; }
+
+    .toast-stack {
+      position: absolute;
+      left: 50%;
+      top: 26vh;
+      transform: translateX(-50%);
+      z-index: 70;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      pointer-events: none;
+      width: min(92vw, 360px);
+    }
+    .toast {
+      background: linear-gradient(90deg, #ff9e00, #ff5e00);
+      border: 2.5px solid #fff;
+      border-radius: 16px;
+      padding: 9px 12px;
+      font-weight: 900;
+      font-size: 0.85rem;
+      color: #fff;
+      text-align: center;
+      box-shadow: 0 6px 20px rgba(255, 120, 0, 0.5);
+      animation: toastIn 3.4s ease forwards;
+    }
+    @keyframes toastIn {
+      0% { opacity: 0; transform: translateY(-14px) scale(0.9); }
+      10% { opacity: 1; transform: none; }
+      85% { opacity: 1; }
+      100% { opacity: 0; transform: translateY(-10px); }
+    }
+
+    .crash-card {
+      max-height: calc(100vh - 20px);
+      max-height: calc(100dvh - 20px);
+      overflow-y: auto;
+      animation: cardIn 0.45s cubic-bezier(.2, 1.4, .4, 1);
+      gap: 11px;
+      scrollbar-width: none;
+    }
+    .crash-card::-webkit-scrollbar { display: none; }
+    .run-stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; width: 100%; }
+    .run-stat {
+      background: rgba(0, 217, 255, 0.08);
+      border: 1.5px solid rgba(0, 217, 255, 0.35);
+      border-radius: 12px;
+      padding: 6px 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 0.64rem;
+      font-weight: 800;
+      color: #a9cdf5;
+    }
+    .run-stat b { font-size: 1rem; color: #ffffff; }
+    .star-row { font-size: 2.1rem; letter-spacing: 6px; filter: drop-shadow(0 0 8px rgba(255, 209, 102, 0.8)); }
+    .star-row span { display: inline-block; animation: starPop 0.5s cubic-bezier(.2, 1.6, .4, 1) backwards; }
+    .star-row span:nth-child(2) { animation-delay: 0.15s; }
+    .star-row span:nth-child(3) { animation-delay: 0.3s; }
+    .star-row .off { opacity: 0.2; filter: grayscale(1); }
+    @keyframes starPop { from { transform: scale(0) rotate(-90deg); } to { transform: none; } }
+    .new-record {
+      background: linear-gradient(90deg, #ffd166, #ff9e00);
+      color: #2a1400;
+      font-weight: 900;
+      font-size: 0.8rem;
+      padding: 4px 14px;
+      border-radius: 12px;
+      animation: pulseBtn 0.9s ease-in-out infinite;
+    }
+    .fun-fact {
+      font-size: 0.74rem;
+      color: #bfe9ff;
+      background: rgba(0, 255, 170, 0.08);
+      border: 1.5px dashed rgba(0, 255, 170, 0.5);
+      border-radius: 12px;
+      padding: 7px 10px;
+      text-align: left;
+      width: 100%;
+      line-height: 1.35;
+    }
+    .btn-revive {
+      width: 100%;
+      padding: 13px;
+      border-radius: 18px;
+      border: 3px solid #ffffff;
+      background: linear-gradient(180deg, #ff6ec7 0%, #b5179e 100%);
+      color: #ffffff;
+      font-size: 1.02rem;
+      font-weight: 900;
+      cursor: pointer;
+      animation: pulseBtn 1s ease-in-out infinite;
+      box-shadow: 0 0 18px rgba(255, 110, 199, 0.55);
+    }
+    .btn-revive:disabled { opacity: 0.4; animation: none; cursor: not-allowed; }
+    .btn-revive.hidden { display: none; }
+    @keyframes pulseBtn { 50% { transform: scale(1.04); } }
+
+    .powerup-legend {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 4px;
+      width: 100%;
+    }
+    .powerup-legend div {
+      background: rgba(0, 217, 255, 0.08);
+      border: 1.5px solid rgba(0, 217, 255, 0.3);
+      border-radius: 10px;
+      padding: 4px 2px;
+      font-size: 0.56rem;
+      font-weight: 800;
+      color: #cfe8ff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      line-height: 1.15;
+    }
+    .powerup-legend div span { font-size: 1.05rem; }
+    #introOverlay.hidden { display: none; }
+  </style>
+</head>
+<body>
+
+  <!-- CANVAS GRÁFICO PRINCIPAL -->
+  <canvas id="gameCanvas"></canvas>
+
+  <!-- PANTALLA DE MENÚ PRINCIPAL -->
+  <div class="menu-screen" id="menuScreen">
+    <div class="menu-card" style="padding: 20px 18px; gap: 11px;">
+      <span class="book-subtag">Primera Parte: Del Cielo a la Tierra</span>
+      <h1 class="menu-main-title" style="font-size: 2.05rem;">CALCIO</h1>
+
+      <!-- DESTACADO: CAPÍTULO 2 - LA VIDA EN EL OCÉANO -->
+      <div class="chapter-hero-banner" style="padding: 6px 14px; font-size: 0.96rem;">
+        🌊 CAPÍTULO 2: LA VIDA EN EL OCÉANO
+      </div>
+
+      <div class="menu-book-excerpt" style="padding: 9px 12px; font-size: 0.8rem;">
+        «Calcio vivió en el océano entre <b>Agua (H₂O), Sodios y Potasios</b>; se unió a los <b>Cloruros (CaCl₂)</b> y conoció a los <b>Aminoácidos (CHON)</b>; hasta que <b>al final se pegó a pequeños crustáceos 🦐 para pasear y escapar</b>.»
+      </div>
+
+      <div class="menu-stats-row" style="padding: 6px 10px; font-size: 0.8rem;">
+        <span>🏆 Mejor Nivel: <b id="bestDistLabel" style="color: var(--neon-cyan);">Nivel 1</b></span>
+        <span>💰 Cristales: <b id="menuWalletLabel" style="color: var(--gold-star);">1500 PTS</b></span>
+      </div>
+
+      <!-- MISIONES ACTIVAS (SE GUARDAN ENTRE PARTIDAS) -->
+      <div class="missions-panel" id="missionsPanel"></div>
+
+      <!-- LEYENDA DE POWER-UPS -->
+      <div class="powerup-legend">
+        <div><span>🧲</span>Imán</div>
+        <div><span>⭐</span>Puntos x2</div>
+        <div><span>❄️</span>Lento</div>
+        <div><span>🚀</span>Turbo</div>
+        <div><span>💖</span>Vida</div>
+      </div>
+
+      <div class="menu-actions-row">
+        <button class="btn-shop-open" id="btnOpenShopMenu">
+          <span>🛒</span> MEJORAS Y SKINS
+        </button>
+        <button class="btn-menu-action" id="btnPlayGame" style="padding: 13px 10px; font-size: 1rem;">
+          <span>🎮</span> ¡JUGAR AHORA!
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE TIENDA DE MEJORAS Y SKINS DE CALCIO (MOBILE-FIRST) -->
+  <div class="shop-modal hidden" id="shopModal">
+    <div class="shop-card">
+      <div class="shop-header">
+        <div style="text-align: left;">
+          <div style="font-size: 1.2rem; font-weight: 900; color: #ffffff; text-shadow: 0 0 10px rgba(0,217,255,0.7);">🛒 Laboratorio de Calcio</div>
+          <div style="font-size: 0.74rem; color: #94b8e8; font-weight: 700;">Equipa Skins y mejora tus poderes iónicos</div>
+        </div>
+        <div class="shop-wallet-pill">
+          <span>💰</span>
+          <span id="shopWalletVal">1500 PTS</span>
+        </div>
+      </div>
+
+      <div class="shop-tabs">
+        <button class="shop-tab-btn active" id="tabBtnUpgrades">⚡ MEJORAS (5)</button>
+        <button class="shop-tab-btn" id="tabBtnSkins">🎨 SKINS (8)</button>
+      </div>
+
+      <!-- LISTA DINÁMICA DE MEJORAS O SKINS -->
+      <div class="shop-list" id="shopItemsContainer"></div>
+
+      <div style="display: flex; gap: 8px; width: 100%;">
+        <button class="btn-crash-menu" id="btnFreePts" style="flex: 1; padding: 11px; font-size: 0.82rem; border-color: #ffd166; color: #ffe066; background: rgba(255, 209, 102, 0.14);">
+          🎁 +1.000 PTS Gratis
+        </button>
+        <button class="btn-menu-action" id="btnCloseShop" style="flex: 1.2; padding: 11px; font-size: 0.95rem;">
+          ✅ LISTO / VOLVER
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HUD EN VIVO DE AVANCE CONTINUO -->
+  <div class="runner-hud" id="runnerHUD" style="display: none;">
+    <div>
+      <div class="hud-top">
+        <div class="chapter-badge">
+          <div class="atom-icon-wrap">
+            <div class="atom-core-circle"></div>
+            <div class="atom-ring r1"></div>
+            <div class="atom-ring r2"></div>
+            <div class="atom-ring r3"></div>
+          </div>
+          <span class="chapter-title-text" id="hudChapterTitle">Capítulo 2: La Vida en el Océano</span>
+        </div>
+
+        <div class="hud-right-group">
+          <div class="score-pill">
+            <span style="color: var(--gold-star);">⭐</span>
+            <span id="hudScoreVal">0 PTS</span>
+          </div>
+          <button class="btn-hud-icon" id="btnHudShop" aria-label="Tienda y Skins" style="border-color: #ffd166; background: linear-gradient(180deg, #ff9e00 0%, #c84b00 100%);">🛒</button>
+          <button class="btn-hud-icon" id="btnPause" aria-label="Pausa">⏸️</button>
+          <button class="btn-hud-icon" id="btnAudioToggle" aria-label="Audio">🔊</button>
+          <button class="btn-hud-icon" id="btnHomeMenu" aria-label="Menú">🏠</button>
+        </div>
+      </div>
+
+      <!-- BARRA COMPACTA Y LIMPIA DE OBJETIVO PARA SUBIR DE NIVEL -->
+      <div class="mission-hud-box" style="max-width: 520px; margin: 6px auto 0 auto; padding: 6px 12px;">
+        <div class="flask-badge" id="hudFlaskIcon" style="width: 32px; height: 32px; font-size: 1.1rem;">💧</div>
+        <div class="mission-info-col">
+          <div class="mission-top-row">
+            <span id="hudMissionText">Atrapa Agua (H₂O) para subir de nivel</span>
+            <span class="distance-counter" id="hudDistance">0 / 12 💧</span>
+          </div>
+          <div class="track-bg">
+            <div class="track-bar" id="hudProgressBar"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PÍLDORA INFERIOR DE GUÍA (CON LA 'i') -->
+    <div class="bottom-guide-pill">
+      <div class="info-circle">i</div>
+      <div class="guide-desc" id="hudGuideText">
+        Desliza a los lados para mover a Calcio y avanzar hasta los crustáceos del final.
+      </div>
+    </div>
+  </div>
+
+  <!-- PANTALLA DE VICTORIA DEL NIVEL (ESCAPE EN CRUSTÁCEO AL FINAL DEL CAPÍTULO 2) -->
+  <div class="crash-overlay hidden" id="victoryModal">
+    <div class="crash-card" style="border-color: #ffd166; box-shadow: 0 0 35px rgba(255, 209, 102, 0.6);">
+      <span style="background: linear-gradient(90deg, #ff9e00, #ff5500); color: #fff; font-weight: 900; font-size: 0.82rem; padding: 5px 16px; border-radius: 14px; text-transform: uppercase;">🦐 ¡Final del Capítulo 2 Alcanzado!</span>
+      <h2 style="font-size: 1.75rem; font-weight: 900; color: #ffe066; text-shadow: 0 2px 10px rgba(255,160,0,0.6);">¡Escape en Crustáceo! 🎉</h2>
+
+      <div class="menu-book-excerpt" id="victoryStatsText" style="border-left-color: #ffd166;">
+        ¡Calcio y sus amigos Cloruro se montaron en los crustáceos al final del nivel y escaparon del gran depredador por la corriente térmica ascendente!
+      </div>
+      <div id="victoryRunStats" style="width: 100%; display: flex; flex-direction: column; align-items: center; gap: 8px;"></div>
+
+      <button class="btn-menu-action" id="btnContinueEndless" style="background: linear-gradient(180deg, #ffb703 0%, #e85d04 100%); font-size: 1.05rem;">
+        <span>🦐</span> SEGUIR SURFEANDO CON CRUSTÁCEOS
+      </button>
+
+      <div class="menu-actions-row">
+        <button class="btn-shop-open" id="btnVictoryShop">
+          <span>🛒</span> MEJORAS / SKINS
+        </button>
+        <button class="btn-crash-menu" id="btnVictoryMenu">
+          <span>🏠</span> MENÚ
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANTALLA DE IMPACTO / FIN DE CARRERA -->
+  <div class="crash-overlay hidden" id="crashModal">
+    <div class="crash-card">
+      <span style="background: #ff3366; color: #fff; font-weight: 900; font-size: 0.8rem; padding: 4px 14px; border-radius: 12px; text-transform: uppercase;">Capítulo 2: Interrupción</span>
+      <h2 style="font-size: 1.8rem; font-weight: 900; color: #ff99aa;">¡Impacto Iónico! 💥</h2>
+
+      <div id="crashStatsText" style="width: 100%; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+      </div>
+
+      <button class="btn-revive" id="btnRevive">💖 REVIVIR (💰 300)</button>
+
+      <button class="btn-crash-retry" id="btnRestartGame">
+        <span>🔄</span> ¡CORRER DE NUEVO!
+      </button>
+
+      <div class="menu-actions-row">
+        <button class="btn-shop-open" id="btnCrashShop">
+          <span>🛒</span> MEJORAS / SKINS
+        </button>
+        <button class="btn-crash-menu" id="btnBackToMenu">
+          <span>🏠</span> MENÚ
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANTALLA DE PAUSA -->
+  <div class="crash-overlay hidden" id="pauseModal" style="z-index: 55;">
+    <div class="crash-card">
+      <h2 style="font-size: 1.8rem; font-weight: 900; color: #7df9ff;">⏸️ Pausa</h2>
+      <div class="fun-fact" id="pauseFact"></div>
+      <button class="btn-menu-action" id="btnResume" style="width: 100%; padding: 14px; font-size: 1.1rem;">
+        <span>▶️</span> CONTINUAR
+      </button>
+      <div class="menu-actions-row">
+        <button class="btn-shop-open" id="btnPauseShop"><span>🛒</span> TIENDA</button>
+        <button class="btn-crash-menu" id="btnPauseMenu"><span>🏠</span> MENÚ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTÓN FLOTANTE DURANTE LA INTRODUCCIÓN CINEMATOGRÁFICA -->
+  <div id="introOverlay" class="hidden" style="position: absolute; top: max(16px, env(safe-area-inset-top)); right: 16px; z-index: 65;">
+    <button id="btnSkipIntro" style="padding: 9px 16px; border-radius: 24px; border: 2px solid #00d9ff; background: rgba(2, 12, 32, 0.85); color: #ffffff; font-weight: 900; font-size: 0.85rem; cursor: pointer; box-shadow: 0 0 15px rgba(0, 217, 255, 0.45);">
+      ⏭️ Saltar Intro
+    </button>
+  </div>
+
+  <!-- NOTIFICACIONES (MISIONES CUMPLIDAS) -->
+  <div class="toast-stack" id="toastStack"></div>
+
+  <!-- MOTOR SUBMARINO Y LÓGICA -->
+  <script>
+    /* ==========================================================================
+       1. AUDIO PROCEDURAL
+       ========================================================================== */
+    class SubmarineAudio {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+      }
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) this.ctx = new AudioContext();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+      playCollect() {
+        if (!this.enabled || !this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(440, now);
+        osc.frequency.exponentialRampToValueAtTime(1100, now + 0.08);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.09);
+      }
+      playShield() {
+        if (!this.enabled || !this.ctx) return;
+        const now = this.ctx.currentTime;
+        [587.33, 880, 1174.66, 1760].forEach((f, i) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(f, now + i * 0.05);
+          gain.gain.setValueAtTime(0.18, now + i * 0.05);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.05 + 0.5);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now + i * 0.05);
+          osc.stop(now + i * 0.05 + 0.55);
+        });
+      }
+      playCrash() {
+        if (!this.enabled || !this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(180, now);
+        osc.frequency.exponentialRampToValueAtTime(30, now + 0.25);
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.26);
+      }
+      playCrustaceanRide() {
+        if (!this.enabled || !this.ctx) return;
+        const now = this.ctx.currentTime;
+        [523.25, 659.25, 783.99, 1046.50, 1318.51].forEach((f, i) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(f, now + i * 0.05);
+          gain.gain.setValueAtTime(0.22, now + i * 0.05);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.05 + 0.28);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now + i * 0.05);
+          osc.stop(now + i * 0.05 + 0.3);
+        });
+      }
+    }
+    const audio = new SubmarineAudio();
+
+    // Sonidos adicionales de la expansión (tonos procedurales reutilizables)
+    SubmarineAudio.prototype.tone = function (freq, dur, type = 'sine', vol = 0.15, delay = 0, slideTo = null) {
+      if (!this.enabled || !this.ctx) return;
+      const now = this.ctx.currentTime + delay;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, now);
+      if (slideTo) osc.frequency.exponentialRampToValueAtTime(slideTo, now + dur);
+      gain.gain.setValueAtTime(vol, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + dur + 0.02);
+    };
+    SubmarineAudio.prototype.playCrystal = function (combo = 0) { this.tone(1100 + Math.min(combo, 40) * 22, 0.07, 'triangle', 0.07); };
+    SubmarineAudio.prototype.playPowerUp = function () { [523, 784, 1046, 1568].forEach((f, i) => this.tone(f, 0.18, 'square', 0.05, i * 0.06)); };
+    SubmarineAudio.prototype.playCombo = function (lvl) { [0, 4, 7, 12].forEach((s, i) => this.tone(440 * Math.pow(2, (s + lvl * 2) / 12), 0.16, 'triangle', 0.1, i * 0.05)); };
+    SubmarineAudio.prototype.playCount = function (go) { this.tone(go ? 880 : 440, go ? 0.4 : 0.15, 'square', 0.08); };
+    SubmarineAudio.prototype.playWhoosh = function () { this.tone(260, 0.22, 'sawtooth', 0.04, 0, 1100); };
+    SubmarineAudio.prototype.playWarning = function () { this.tone(700, 0.1, 'square', 0.06); this.tone(700, 0.1, 'square', 0.06, 0.16); };
+    // Música ambiental submarina procedural (suave, en escala pentatónica)
+    SubmarineAudio.prototype.startMusic = function () {
+      if (this.musicTimer || !this.ctx) return;
+      const scale = [0, 3, 5, 7, 10, 12, 15];
+      const bass = [0, -4, -7, -2];
+      let step = 0;
+      this.musicTimer = setInterval(() => {
+        if (!this.enabled || !this.ctx || !State.running) return;
+        const root = 220;
+        if (step % 8 === 0) this.tone(root / 2 * Math.pow(2, bass[Math.floor(step / 8) % 4] / 12), 1.4, 'sine', 0.06);
+        if (step % 2 === 0 || Math.random() < 0.35) {
+          const n = scale[Math.floor(Math.random() * scale.length)];
+          this.tone(root * Math.pow(2, n / 12) * (Math.random() < 0.25 ? 2 : 1), 0.4, 'triangle', 0.025);
+        }
+        step++;
+      }, 240);
+    };
+
+    /* ==========================================================================
+       2. CANVAS Y RESPONSIVE
+       ========================================================================== */
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    let W = window.innerWidth;
+    let H = window.innerHeight;
+    let dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    function resize() {
+      W = window.innerWidth;
+      H = window.innerHeight;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = W * dpr;
+      canvas.height = H * dpr;
+      ctx.resetTransform();
+      ctx.scale(dpr, dpr);
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    /* ==========================================================================
+       3. SISTEMA DE SKINS, MEJORAS Y FONDOS REALES SUBMARINOS
+       ========================================================================== */
+    const STAGE_LENGTH = 400; // Cada etapa dura 400 metros (~40 segundos de juego fluido)
+    const LEVEL_GOAL_DIST = STAGE_LENGTH * 4; // 1600 m en total para completar las 4 etapas del Capítulo 2
+
+    // Fotografías submarinas reales (Unsplash CDN) para cada etapa del océano
+    const REAL_OCEAN_URLS = {
+      1: 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=900&q=80', // Superficie soleada turquesa
+      2: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=900&q=80', // Arrecife costero cristalino
+      3: 'https://images.unsplash.com/photo-1551244072-5d12893278ab?auto=format&fit=crop&w=900&q=80', // Océano profundo bioluminiscente
+      4: 'https://images.unsplash.com/photo-1546026423-cc4642628d2b?auto=format&fit=crop&w=900&q=80'  // Arrecife de coral vivo y crustáceos
+    };
+    const OceanImages = {};
+    Object.keys(REAL_OCEAN_URLS).forEach(z => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.src = REAL_OCEAN_URLS[z];
+      OceanImages[z] = img;
+    });
+
+    // Catálogo de Skins de Calcio
+    const SKINS_CATALOG = [
+      {
+        id: 'oceanic',
+        name: 'Calcio Oceánico',
+        icon: '🔵',
+        price: 0,
+        desc: 'El ion clásico Ca²⁺ cian bioluminiscente del océano primitivo.',
+        c0: '#ffffff', c1: '#48ecff', c2: '#0066dd', c3: '#001d55',
+        ringColor: '#00e5ff', haloRgba: 'rgba(0, 225, 255, 0.65)', crown: false
+      },
+      {
+        id: 'calcite',
+        name: 'Calcita Diamante',
+        icon: '💎',
+        price: 500,
+        desc: 'Esfera de cristal nacarado blanco-diamante con anillos dorados.',
+        c0: '#ffffff', c1: '#e2f1ff', c2: '#7cc4ff', c3: '#1e3a8a',
+        ringColor: '#ffd166', haloRgba: 'rgba(255, 225, 130, 0.65)', crown: false
+      },
+      {
+        id: 'magma',
+        name: 'Calcio Magmático',
+        icon: '🌋',
+        price: 800,
+        desc: 'Forjado en chimeneas volcánicas submarinas con anillos de lava.',
+        c0: '#fff3b0', c1: '#ff7b00', c2: '#d00000', c3: '#370617',
+        ringColor: '#ffbe0b', haloRgba: 'rgba(255, 110, 0, 0.68)', crown: false
+      },
+      {
+        id: 'arctic',
+        name: 'Calcio Glaciar',
+        icon: '❄️',
+        price: 900,
+        desc: 'Esfera de hielo ártico cristalino con estela congelada.',
+        c0: '#ffffff', c1: '#a5f3fc', c2: '#0284c7', c3: '#082f49',
+        ringColor: '#e0f2fe', haloRgba: 'rgba(125, 211, 252, 0.68)', crown: false
+      },
+      {
+        id: 'jelly',
+        name: 'Calcio Medusa Neón',
+        icon: '🪼',
+        price: 1100,
+        desc: 'Bioluminiscencia abismal verde esmeralda y ultravioleta.',
+        c0: '#ffffff', c1: '#00ffaa', c2: '#7209b7', c3: '#240046',
+        ringColor: '#00ffaa', haloRgba: 'rgba(0, 255, 170, 0.68)', crown: false
+      },
+      {
+        id: 'supernova',
+        name: 'Calcio Rey Supernova',
+        icon: '👑',
+        price: 1400,
+        desc: 'Oro estelar con corona real en honor a su origen en una Supernova.',
+        c0: '#ffffff', c1: '#ffd166', c2: '#b5179e', c3: '#240046',
+        ringColor: '#ffd166', haloRgba: 'rgba(255, 209, 102, 0.75)', crown: true
+      },
+      {
+        id: 'coral',
+        name: 'Calcio Coralino',
+        icon: '🪸',
+        price: 1800,
+        desc: 'Hecho de carbonato de calcio (CaCO₃), como los arrecifes de coral.',
+        c0: '#fff0f5', c1: '#ff8fab', c2: '#e5383b', c3: '#4a0418',
+        ringColor: '#ffc2d1', haloRgba: 'rgba(255, 143, 171, 0.7)', crown: false
+      },
+      {
+        id: 'galaxy',
+        name: 'Calcio Galáctico',
+        icon: '🌌',
+        price: 2600,
+        desc: 'Polvo de estrellas: el calcio nació en el corazón de una estrella.',
+        c0: '#ffffff', c1: '#9d4edd', c2: '#3a0ca3', c3: '#03001c',
+        ringColor: '#c77dff', haloRgba: 'rgba(199, 125, 255, 0.75)', crown: true
+      }
+    ];
+
+    // Catálogo de Mejoras Químicas
+    const UPGRADES_CATALOG = [
+      {
+        id: 'magnet',
+        name: 'Imán de Solvatación',
+        icon: '🧲',
+        baseCost: 300,
+        maxLevel: 5,
+        desc: 'Atrae automáticamente el Agua (H₂O) y los Cloruros (Cl⁻) cercanos hacia Calcio.'
+      },
+      {
+        id: 'shield',
+        name: 'Escudo Cristalino CaCl₂',
+        icon: '🛡️',
+        baseCost: 350,
+        maxLevel: 5,
+        desc: '+2.5s de duración del escudo CaCl₂ por nivel (Nv. 2+ inicia con 1 Cloruro unido).'
+      },
+      {
+        id: 'crustacean',
+        name: 'Turbo de Crustáceo',
+        icon: '🦐',
+        baseCost: 400,
+        maxLevel: 5,
+        desc: '+2.5s de paseo en Crustáceo y más puntos al demoler obstáculos.'
+      },
+      {
+        id: 'multiplier',
+        name: 'Multiplicador Atómico',
+        icon: '✨',
+        baseCost: 450,
+        maxLevel: 5,
+        desc: 'Aumenta todos los puntos y cristales ganados (+25% por cada nivel).'
+      },
+      {
+        id: 'luck',
+        name: 'Suerte de Plancton',
+        icon: '🍀',
+        baseCost: 400,
+        maxLevel: 5,
+        desc: 'Aparecen más Power-Ups (🧲⭐❄️🚀💖) y duran +15% por nivel.'
+      }
+    ];
+
+    // Datos persistentes del jugador (Guardados en localStorage)
+    const SaveData = {
+      walletPts: 1500, // Bono inicial para que pueda comprar mejoras o skins desde el inicio
+      equippedSkin: 'oceanic',
+      unlockedSkins: ['oceanic'],
+      upgrades: {
+        magnet: 0,
+        shield: 0,
+        crustacean: 0,
+        multiplier: 0,
+        luck: 0
+      },
+      bestDist: 0,
+      bestScore: 0,
+      missions: [],
+      missionTiers: {},
+
+      load() {
+        try {
+          const raw = localStorage.getItem('calcio_ocean_save_v3');
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (typeof parsed.walletPts === 'number') this.walletPts = parsed.walletPts;
+            if (parsed.equippedSkin) this.equippedSkin = parsed.equippedSkin;
+            if (Array.isArray(parsed.unlockedSkins)) this.unlockedSkins = parsed.unlockedSkins;
+            if (parsed.upgrades) this.upgrades = { ...this.upgrades, ...parsed.upgrades };
+            if (typeof parsed.bestDist === 'number') this.bestDist = parsed.bestDist;
+            if (typeof parsed.bestScore === 'number') this.bestScore = parsed.bestScore;
+            if (Array.isArray(parsed.missions)) this.missions = parsed.missions;
+            if (parsed.missionTiers) this.missionTiers = parsed.missionTiers;
+          }
+        } catch (e) {}
+      },
+      save() {
+        try {
+          localStorage.setItem('calcio_ocean_save_v3', JSON.stringify({
+            walletPts: this.walletPts,
+            equippedSkin: this.equippedSkin,
+            unlockedSkins: this.unlockedSkins,
+            upgrades: this.upgrades,
+            bestDist: this.bestDist,
+            bestScore: this.bestScore,
+            missions: this.missions,
+            missionTiers: this.missionTiers
+          }));
+        } catch (e) {}
+      },
+      getSkin() {
+        return SKINS_CATALOG.find(s => s.id === this.equippedSkin) || SKINS_CATALOG[0];
+      },
+      getMultiplier() {
+        return 1 + (this.upgrades.multiplier || 0) * 0.25;
+      }
+    };
+    SaveData.load();
+
+    // Objetivos de recolección para subir de nivel (en lugar de subir por metros)
+    const STAGE_GOALS = {
+      1: 12, // Nivel 1: Atrapar 12 moléculas de Agua (H₂O)
+      2: 10, // Nivel 2: Atrapar 10 iones de Cloruro (Cl⁻)
+      3: 8,  // Nivel 3: Superar 8 Aminoácidos (CHON) / Agua (H₂O)
+      4: 3   // Nivel 4 Final: Montarse en 3 Crustáceos (🦐)
+    };
+
+    const State = {
+      running: false,
+      pausedByShop: false,
+      endlessMode: false,
+      distance: 0,
+      score: 0,
+      bestDistance: SaveData.bestDist,
+      bestScore: SaveData.bestScore,
+      speed: 4.3,
+      zone: 1,
+      stageCollected: 0,
+      shieldTimer: 0,
+      surfTimer: 0,
+      bgScrollY: 0,
+      curSpeed: 0,
+      invulnTimer: 0,
+      countdown: 0,
+      goTimer: 0,
+      pausedByPause: false,
+      revivesUsed: 0,
+      startDist: 0,
+      bannerText: '',
+      bannerSub: '',
+      bannerColor: '#00d9ff',
+      bannerTimer: 0
+    };
+
+    function updateWalletUI() {
+      const mEl = document.getElementById('menuWalletLabel');
+      const sEl = document.getElementById('shopWalletVal');
+      const bEl = document.getElementById('bestDistLabel');
+      if (mEl) mEl.textContent = `${SaveData.walletPts} PTS`;
+      if (sEl) sEl.textContent = `${SaveData.walletPts} PTS`;
+      if (bEl) bEl.textContent = `${State.bestScore} PTS`;
+    }
+    updateWalletUI();
+
+    function showStageBanner(title, subtitle, color = '#00d9ff', duration = 0) {
+      // Desactivado el cartel negro flotante para mantener la pantalla limpia
+      State.bannerTimer = 0;
+    }
+
+    /* ==========================================================================
+       3b. SISTEMA DE DIVERSIÓN: COMBOS, POWER-UPS, MISIONES Y EFECTOS
+       ========================================================================== */
+    const POWERUP_TYPES = {
+      magnet: { icon: '🧲', name: 'IMÁN IÓNICO', color: '#00e5ff', dur: 8 },
+      double: { icon: '⭐', name: 'PUNTOS x2', color: '#ffd166', dur: 10 },
+      slow:   { icon: '❄️', name: 'AGUA FRÍA', color: '#a5f3fc', dur: 6 },
+      rocket: { icon: '🚀', name: 'CORRIENTE MARINA', color: '#ff6ec7', dur: 4.5 },
+      life:   { icon: '💖', name: 'VIDA EXTRA', color: '#ff4d8d', dur: 0 }
+    };
+
+    const FUN_FACTS = [
+      '🦴 Tu cuerpo tiene cerca de 1 kg de calcio, ¡casi todo en huesos y dientes!',
+      '🦐 Los crustáceos fabrican su caparazón con carbonato de calcio (CaCO₃).',
+      '🧪 El cloruro de calcio (CaCl₂) se forma cuando un Ca²⁺ se une a dos Cl⁻.',
+      '💧 El agua (H₂O) rodea a los iones disueltos: a eso se le llama solvatación.',
+      '🧬 Los aminoácidos están formados sobre todo por C, H, O y N (CHON).',
+      '🌟 El calcio se formó dentro de estrellas gigantes y viajó por el espacio tras una supernova.',
+      '🌊 En el océano, los iones más abundantes son el sodio (Na⁺) y el cloruro (Cl⁻).',
+      '🪸 Los corales construyen arrecifes enormes usando calcio del agua de mar.',
+      '⚛️ El calcio tiene número atómico 20: 20 protones en su núcleo.',
+      '🐚 Las conchas marinas y la tiza están hechas principalmente de carbonato de calcio.',
+      '🥛 El Ca²⁺ ha perdido 2 electrones; por eso su carga es +2.',
+      '🏔️ El calcio es el 5.º elemento más abundante de la corteza terrestre.'
+    ];
+
+    const MISSION_POOL = [
+      { id: 'h2o',   icon: '💧', text: 'Atrapa {n} moléculas de Agua (H₂O)', stat: 'h2o', goals: [15, 35, 70], rewards: [300, 550, 900] },
+      { id: 'cl',    icon: '🧪', text: 'Une {n} Cloruros (Cl⁻) a Calcio', stat: 'cl', goals: [8, 18, 35], rewards: [300, 550, 900] },
+      { id: 'crys',  icon: '💎', text: 'Junta {n} Cristales de Calcita', stat: 'crystals', goals: [60, 160, 350], rewards: [350, 600, 1000] },
+      { id: 'combo', icon: '🔥', text: 'Logra un combo x{n}', stat: 'maxCombo', goals: [15, 30, 50], rewards: [400, 700, 1100], single: true },
+      { id: 'crus',  icon: '🦐', text: 'Móntate en {n} Crustáceos', stat: 'crustaceans', goals: [2, 5, 10], rewards: [400, 700, 1100] },
+      { id: 'near',  icon: '😎', text: 'Haz {n} esquives perfectos', stat: 'nearMiss', goals: [5, 12, 25], rewards: [350, 600, 1000] },
+      { id: 'pu',    icon: '🎁', text: 'Atrapa {n} Power-Ups', stat: 'powerups', goals: [3, 7, 14], rewards: [350, 600, 1000] },
+      { id: 'chon',  icon: '🧬', text: 'Atraviesa {n} anillos CHON', stat: 'chon', goals: [4, 9, 16], rewards: [350, 600, 1000] },
+      { id: 'dist',  icon: '📏', text: 'Recorre {n} m en una sola partida', stat: 'distance', goals: [500, 1000, 1600], rewards: [400, 750, 1200], single: true }
+    ];
+
+    function buzz(ms) {
+      try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {}
+    }
+
+    function showToast(msg) {
+      const stack = document.getElementById('toastStack');
+      if (!stack) return;
+      const el = document.createElement('div');
+      el.className = 'toast';
+      el.textContent = msg;
+      stack.appendChild(el);
+      setTimeout(() => el.remove(), 3500);
+    }
+
+    const Missions = {
+      def(id) { return MISSION_POOL.find(m => m.id === id); },
+      text(m) {
+        const d = this.def(m.id);
+        return d ? d.text.replace('{n}', d.goals[m.tier]) : '';
+      },
+      ensure() {
+        SaveData.missions = (SaveData.missions || []).filter(m => this.def(m.id));
+        while (SaveData.missions.length < 3) this.addNew();
+      },
+      addNew() {
+        const used = SaveData.missions.map(m => m.id);
+        const pool = MISSION_POOL.filter(m => !used.includes(m.id));
+        const d = pool[Math.floor(Math.random() * pool.length)];
+        const tier = Math.min(2, SaveData.missionTiers[d.id] || 0);
+        SaveData.missions.push({ id: d.id, tier, progress: 0 });
+      },
+      report(stat, val, isMax) {
+        const done = [];
+        SaveData.missions.forEach(m => {
+          const d = this.def(m.id);
+          if (!d || d.stat !== stat) return;
+          if (d.single) { if (val > m.progress) m.progress = val; }
+          else if (!isMax) m.progress += val;
+          if (m.progress >= d.goals[m.tier]) done.push(m);
+        });
+        done.forEach(m => this.complete(m));
+      },
+      complete(m) {
+        const d = this.def(m.id);
+        const reward = d.rewards[m.tier];
+        SaveData.walletPts += reward;
+        SaveData.missionTiers[d.id] = (SaveData.missionTiers[d.id] || 0) + 1;
+        showToast(`🏅 ¡MISIÓN CUMPLIDA! ${this.text(m)} · +${reward} 💰`);
+        audio.playPowerUp();
+        buzz(60);
+        const idx = SaveData.missions.indexOf(m);
+        if (idx >= 0) SaveData.missions.splice(idx, 1);
+        this.addNew();
+        SaveData.save();
+      },
+      render() {
+        const panel = document.getElementById('missionsPanel');
+        if (!panel) return;
+        this.ensure();
+        let html = `<div class="missions-title"><span>🎯 Misiones del Océano</span><span>🏅 Recompensa</span></div>`;
+        SaveData.missions.forEach(m => {
+          const d = this.def(m.id);
+          const goal = d.goals[m.tier];
+          const pct = Math.min(100, (m.progress / goal) * 100);
+          html += `
+            <div class="mission-row">
+              <div class="m-icon">${d.icon}</div>
+              <div class="m-body">
+                <span>${this.text(m)} <span style="color:#7df9ff;">(${Math.min(m.progress, goal)}/${goal})</span></span>
+                <div class="m-bar"><div style="width:${pct}%"></div></div>
+              </div>
+              <div class="m-reward">+${d.rewards[m.tier]} 💰</div>
+            </div>`;
+        });
+        panel.innerHTML = html;
+      }
+    };
+
+    const Fun = {
+      combo: 0,
+      comboTimer: 0,
+      maxCombo: 0,
+      comboPop: null,
+      pu: { magnet: 0, double: 0, slow: 0, rocket: 0 },
+      puMax: { magnet: 1, double: 1, slow: 1, rocket: 1 },
+      extraLife: 0,
+      shake: 0,
+      flashAlpha: 0,
+      flashColor: '#ffffff',
+      trail: [],
+      run: { h2o: 0, cl: 0, chon: 0, crustaceans: 0, crystals: 0, nearMiss: 0, powerups: 0, earned: 0 },
+
+      resetRun() {
+        this.combo = 0;
+        this.comboTimer = 0;
+        this.maxCombo = 0;
+        this.comboPop = null;
+        this.pu = { magnet: 0, double: 0, slow: 0, rocket: 0 };
+        this.extraLife = 0;
+        this.shake = 0;
+        this.flashAlpha = 0;
+        this.trail = [];
+        this.run = { h2o: 0, cl: 0, chon: 0, crustaceans: 0, crystals: 0, nearMiss: 0, powerups: 0, earned: 0 };
+      },
+
+      comboMult() { return 1 + Math.min(3, Math.floor(this.combo / 5) * 0.5); },
+
+      addCombo() {
+        this.combo++;
+        this.comboTimer = 2.6;
+        if (this.combo > this.maxCombo) {
+          this.maxCombo = this.combo;
+          Missions.report('maxCombo', this.maxCombo, true);
+        }
+        const milestones = { 10: '¡GENIAL!', 25: '¡INCREÍBLE!', 50: '¡ATÓMICO!', 75: '¡IMPARABLE!', 100: '¡SUPERNOVA!', 150: '¡LEYENDA IÓNICA!' };
+        if (milestones[this.combo]) {
+          this.comboPop = { text: `🔥 COMBO x${this.combo}`, sub: milestones[this.combo], t: 1.4 };
+          audio.playCombo(Math.min(5, Math.floor(this.combo / 25)));
+          this.flash('#ffd166', 0.22);
+          buzz(30);
+        }
+      },
+
+      gain(base, x, y, label, color, useCombo = true) {
+        if (useCombo) this.addCombo();
+        const m = SaveData.getMultiplier() * this.comboMult() * (this.pu.double > 0 ? 2 : 1);
+        const g = Math.round(base * m);
+        State.score += g;
+        SaveData.walletPts += g;
+        this.run.earned += g;
+        if (label) World.floatingTexts.push({ text: `${label} +${g}`, x, y, life: 1.0, color, scale: 1.6 });
+        return g;
+      },
+
+      stat(key, n = 1) {
+        this.run[key] += n;
+        Missions.report(key, n, false);
+      },
+
+      activatePowerup(type) {
+        const def = POWERUP_TYPES[type];
+        const durMul = 1 + (SaveData.upgrades.luck || 0) * 0.15;
+        if (type === 'life') {
+          this.extraLife = Math.min(3, this.extraLife + 1);
+        } else {
+          const d = def.dur * durMul;
+          this.pu[type] = d;
+          this.puMax[type] = d;
+        }
+        this.stat('powerups');
+        audio.playPowerUp();
+        buzz(40);
+        this.flash(def.color, 0.35);
+        World.floatingTexts.push({ text: `${def.icon} ¡${def.name}!`, x: Player.x, y: Player.y - 85, life: 1.4, color: def.color, scale: 1.8 });
+        if (type === 'rocket') {
+          this.shake = 7;
+          audio.playWhoosh();
+        }
+      },
+
+      flash(color, a) {
+        this.flashColor = color;
+        this.flashAlpha = Math.max(this.flashAlpha, a);
+      },
+
+      update(dt, curSpeed) {
+        if (this.comboTimer > 0) {
+          this.comboTimer -= dt;
+          if (this.comboTimer <= 0) {
+            if (this.combo >= 10) {
+              World.floatingTexts.push({ text: `Combo x${this.combo} terminado`, x: W / 2, y: H * 0.45, life: 0.9, color: '#ffb3c1', scale: 1 });
+            }
+            this.combo = 0;
+          }
+        }
+        for (const k in this.pu) if (this.pu[k] > 0) this.pu[k] -= dt;
+        if (State.invulnTimer > 0) State.invulnTimer -= dt;
+        if (this.comboPop) {
+          this.comboPop.t -= dt;
+          if (this.comboPop.t <= 0) this.comboPop = null;
+        }
+
+        // Estela de movimiento de Calcio
+        this.trail.push({ x: Player.x, y: Player.y });
+        this.trail.forEach(p => { p.y += curSpeed * 0.9; });
+        if (this.trail.length > 13) this.trail.shift();
+      },
+
+      tickFX() {
+        this.shake *= 0.88;
+        if (this.shake < 0.3) this.shake = 0;
+        if (this.flashAlpha > 0) this.flashAlpha = Math.max(0, this.flashAlpha - 0.03);
+      },
+
+      // Estela y auras debajo de Calcio
+      drawPlayerFX(ctx) {
+        const skin = SaveData.getSkin();
+        const col = this.pu.rocket > 0 ? '#ff6ec7' : (State.surfTimer > 0 ? '#ffb703' : skin.ringColor);
+        ctx.save();
+        const n = this.trail.length;
+        this.trail.forEach((p, i) => {
+          const k = (i + 1) / n;
+          ctx.globalAlpha = k * 0.32;
+          ctx.fillStyle = col;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 6 + k * (Player.r * 0.7), 0, Math.PI * 2);
+          ctx.fill();
+        });
+        ctx.restore();
+
+        // Llamas de la Corriente Marina (Turbo)
+        if (this.pu.rocket > 0) {
+          ctx.save();
+          ctx.translate(Player.x, Player.y);
+          for (let i = 0; i < 3; i++) {
+            const len = 60 + Math.random() * 40;
+            const g = ctx.createLinearGradient(0, 10, 0, len);
+            g.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+            g.addColorStop(0.3, 'rgba(255, 110, 199, 0.7)');
+            g.addColorStop(1, 'rgba(157, 78, 221, 0)');
+            ctx.fillStyle = g;
+            ctx.beginPath();
+            ctx.moveTo(-14 + i * 14 - 9, 18);
+            ctx.lineTo(-14 + i * 14 + 9, 18);
+            ctx.lineTo(-14 + i * 14, 18 + len);
+            ctx.closePath();
+            ctx.fill();
+          }
+          ctx.restore();
+        }
+
+        // Burbuja protectora de Vidas Extra
+        if (this.extraLife > 0) {
+          ctx.save();
+          ctx.translate(Player.x, Player.y);
+          const wob = Math.sin(Date.now() * 0.006) * 2;
+          ctx.beginPath();
+          ctx.arc(0, 0, Player.r * 1.55 + wob, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(255, 140, 190, 0.1)';
+          ctx.fill();
+          ctx.strokeStyle = 'rgba(255, 140, 200, 0.75)';
+          ctx.lineWidth = 2.5;
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.arc(-Player.r * 0.7, -Player.r * 0.8, 6, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+          ctx.fill();
+          ctx.restore();
+        }
+
+        // Aura helada del power-up lento
+        if (this.pu.slow > 0) {
+          ctx.save();
+          ctx.translate(Player.x, Player.y);
+          ctx.rotate(Date.now() * 0.001);
+          ctx.strokeStyle = 'rgba(165, 243, 252, 0.7)';
+          ctx.lineWidth = 2;
+          for (let i = 0; i < 6; i++) {
+            ctx.rotate(Math.PI / 3);
+            ctx.beginPath();
+            ctx.moveTo(0, Player.r * 1.3);
+            ctx.lineTo(0, Player.r * 1.75);
+            ctx.moveTo(-5, Player.r * 1.55);
+            ctx.lineTo(0, Player.r * 1.65);
+            ctx.lineTo(5, Player.r * 1.55);
+            ctx.stroke();
+          }
+          ctx.restore();
+        }
+      },
+
+      // Cristales, burbujas de power-up, alertas y ondas (debajo de los textos)
+      drawPickups(ctx) {
+        const now = Date.now();
+
+        // Alertas de Depredador entrante
+        World.warnings.forEach(w => {
+          const blink = Math.floor(now / 120) % 2 === 0;
+          ctx.save();
+          const lg = ctx.createLinearGradient(0, 0, 0, H);
+          lg.addColorStop(0, 'rgba(255, 42, 85, 0.28)');
+          lg.addColorStop(1, 'rgba(255, 42, 85, 0)');
+          ctx.fillStyle = lg;
+          ctx.fillRect(w.x - 40, 0, 80, H);
+          if (blink) {
+            drawClearBadge(ctx, w.x, 195, '⚠️ ¡DEPREDADOR! 🦈', '#ff2a55', 'rgba(60, 0, 15, 0.95)', 13, '#ffffff');
+          }
+          ctx.restore();
+        });
+
+        // Cristales de Calcita giratorios
+        World.crystals.forEach(c => {
+          ctx.save();
+          ctx.translate(c.x, c.y);
+          ctx.scale(Math.max(0.25, Math.abs(Math.cos(c.rot))), 1);
+          const g = ctx.createLinearGradient(-9, -13, 9, 13);
+          g.addColorStop(0, '#ffffff');
+          g.addColorStop(0.4, '#7df9ff');
+          g.addColorStop(1, '#0284c7');
+          ctx.fillStyle = g;
+          ctx.strokeStyle = '#012a4a';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(0, -14);
+          ctx.lineTo(10, 0);
+          ctx.lineTo(0, 14);
+          ctx.lineTo(-10, 0);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+          ctx.lineWidth = 1.2;
+          ctx.beginPath();
+          ctx.moveTo(0, -14);
+          ctx.lineTo(0, 14);
+          ctx.moveTo(-10, 0);
+          ctx.lineTo(10, 0);
+          ctx.stroke();
+          ctx.restore();
+          // Destello
+          if ((c.rot * 10 | 0) % 25 === 0) {
+            ctx.save();
+            ctx.fillStyle = '#ffffff';
+            ctx.globalAlpha = 0.9;
+            ctx.beginPath();
+            ctx.arc(c.x + 5, c.y - 6, 2.2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+          }
+        });
+
+        // Burbujas de Power-Up
+        World.powerups.forEach(p => {
+          const def = POWERUP_TYPES[p.type];
+          const py = p.y + Math.sin(p.ph) * 5;
+          ctx.save();
+          ctx.translate(p.x, py);
+          const glow = ctx.createRadialGradient(0, 0, 8, 0, 0, 48);
+          glow.addColorStop(0, def.color);
+          glow.addColorStop(1, 'transparent');
+          ctx.globalAlpha = 0.45 + Math.sin(p.ph * 2) * 0.15;
+          ctx.fillStyle = glow;
+          ctx.beginPath();
+          ctx.arc(0, 0, 48, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.globalAlpha = 1;
+
+          const bub = ctx.createRadialGradient(-8, -8, 2, 0, 0, 26);
+          bub.addColorStop(0, 'rgba(255, 255, 255, 0.55)');
+          bub.addColorStop(0.6, 'rgba(255, 255, 255, 0.12)');
+          bub.addColorStop(1, 'rgba(255, 255, 255, 0.28)');
+          ctx.fillStyle = bub;
+          ctx.beginPath();
+          ctx.arc(0, 0, 26, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = def.color;
+          ctx.lineWidth = 3;
+          ctx.stroke();
+
+          ctx.rotate(Math.sin(p.ph) * 0.2);
+          ctx.font = '24px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(def.icon, 0, 2);
+          ctx.rotate(-Math.sin(p.ph) * 0.2);
+
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+          ctx.beginPath();
+          ctx.ellipse(-10, -13, 6, 3, -0.6, 0, Math.PI * 2);
+          ctx.fill();
+
+          drawClearBadge(ctx, 0, 40, def.name, def.color, 'rgba(4, 10, 30, 0.92)', 9.5, '#ffffff');
+          ctx.restore();
+        });
+
+        // Ondas expansivas al recolectar
+        World.rings.forEach(r => {
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, r.alpha);
+          ctx.strokeStyle = r.color;
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.arc(r.x, r.y, r.r, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.restore();
+        });
+      },
+
+      // Capa superior: líneas de velocidad, viñeta, combo, power-ups activos, cuenta regresiva
+      drawOverlay(ctx) {
+        const inGame = State.running || State.pausedByShop || State.pausedByPause;
+
+        // Líneas de velocidad (Turbo / Crustáceo)
+        if (inGame && (this.pu.rocket > 0 || State.surfTimer > 0)) {
+          ctx.save();
+          ctx.strokeStyle = this.pu.rocket > 0 ? 'rgba(255, 180, 230, 0.45)' : 'rgba(255, 220, 140, 0.35)';
+          ctx.lineWidth = 2;
+          for (let i = 0; i < 14; i++) {
+            const x = (i * 97 + (Date.now() * 0.05) % 97) % W;
+            const y = ((Date.now() * (0.9 + (i % 3) * 0.3) + i * 211) % (H + 200)) - 100;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x, y + 60 + (i % 4) * 20);
+            ctx.stroke();
+          }
+          ctx.restore();
+        }
+
+        // Escarcha en los bordes (Agua Fría)
+        if (inGame && this.pu.slow > 0) {
+          ctx.save();
+          const fg = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.35, W / 2, H / 2, Math.max(W, H) * 0.75);
+          fg.addColorStop(0, 'rgba(165, 243, 252, 0)');
+          fg.addColorStop(1, 'rgba(200, 250, 255, 0.35)');
+          ctx.fillStyle = fg;
+          ctx.fillRect(0, 0, W, H);
+          ctx.restore();
+        }
+
+        // Viñeta cinematográfica
+        const vg = ctx.createRadialGradient(W / 2, H * 0.55, Math.min(W, H) * 0.3, W / 2, H * 0.55, Math.max(W, H) * 0.8);
+        vg.addColorStop(0, 'rgba(0, 0, 0, 0)');
+        vg.addColorStop(1, 'rgba(0, 4, 18, 0.55)');
+        ctx.fillStyle = vg;
+        ctx.fillRect(0, 0, W, H);
+
+        if (inGame) {
+          const colY = Math.max(205, H * 0.33);
+
+          // Contador de Cristales de Calcita (derecha)
+          drawClearBadge(ctx, W - 50, colY, `💎 ${this.run.crystals}`, '#7df9ff', 'rgba(2, 14, 36, 0.9)', 13, '#ffffff');
+
+          // Medidor de Combo
+          if (this.combo >= 2) {
+            const pulse = 1 + Math.max(0, this.comboTimer - 2.3) * 0.8;
+            ctx.save();
+            ctx.translate(W - 50, colY + 40);
+            ctx.scale(pulse, pulse);
+            const hot = this.combo >= 25 ? '#ff4d00' : (this.combo >= 10 ? '#ff9e00' : '#ffd166');
+            drawClearBadge(ctx, 0, 0, `🔥 x${this.combo}`, hot, 'rgba(40, 10, 0, 0.92)', 15, '#ffffff');
+            ctx.restore();
+            // Barra de tiempo del combo
+            const bw = 70;
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+            ctx.fillRect(W - 50 - bw / 2, colY + 58, bw, 5);
+            ctx.fillStyle = '#ffb703';
+            ctx.fillRect(W - 50 - bw / 2, colY + 58, bw * Math.max(0, this.comboTimer / 2.6), 5);
+            drawOutlinedFormula(ctx, `PTS x${this.comboMult().toFixed(1)}`, W - 50, colY + 75, 10.5, '#ffe066', '#1a0800', 3);
+          }
+
+          // Power-ups activos con temporizador circular (izquierda)
+          let iy = colY;
+          const drawPu = (icon, color, frac, label) => {
+            ctx.save();
+            ctx.translate(34, iy);
+            ctx.fillStyle = 'rgba(2, 12, 32, 0.88)';
+            ctx.beginPath();
+            ctx.arc(0, 0, 21, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.arc(0, 0, 21, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * Math.max(0, frac));
+            ctx.stroke();
+            ctx.font = '18px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(icon, 0, 1);
+            if (label) drawOutlinedFormula(ctx, label, 14, 15, 10, '#ffffff', '#000000', 3);
+            ctx.restore();
+            iy += 50;
+          };
+          for (const k of ['rocket', 'magnet', 'double', 'slow']) {
+            if (this.pu[k] > 0) drawPu(POWERUP_TYPES[k].icon, POWERUP_TYPES[k].color, this.pu[k] / this.puMax[k], null);
+          }
+          if (State.shieldTimer > 0) drawPu('🛡️', '#00ffaa', State.shieldTimer / (9 + (SaveData.upgrades.shield || 0) * 2.5), null);
+          if (State.surfTimer > 0) drawPu('🦐', '#ffb703', State.surfTimer / (10 + (SaveData.upgrades.crustacean || 0) * 2.5), null);
+          if (this.extraLife > 0) drawPu('💖', '#ff4d8d', 1, `x${this.extraLife}`);
+        }
+
+        // Pop de combo en el centro
+        if (this.comboPop) {
+          const t = this.comboPop.t;
+          const s = t > 1.2 ? 1 + (t - 1.2) * 4 : 1;
+          ctx.save();
+          ctx.globalAlpha = Math.min(1, t * 2);
+          ctx.translate(W / 2, H * 0.42);
+          ctx.scale(s, s);
+          drawOutlinedFormula(ctx, this.comboPop.text, 0, 0, 30, '#ffd166', '#3a1200', 7);
+          drawOutlinedFormula(ctx, this.comboPop.sub, 0, 32, 20, '#ffffff', '#3a1200', 6);
+          ctx.restore();
+        }
+
+        // Cuenta regresiva 3-2-1-¡YA!
+        if (State.running && (State.countdown > 0 || State.goTimer > 0)) {
+          const txt = State.countdown > 0 ? String(Math.ceil(State.countdown)) : '¡YA!';
+          const frac = State.countdown > 0 ? State.countdown % 1 : State.goTimer / 0.7;
+          const s = 1 + frac * 0.6;
+          ctx.save();
+          ctx.globalAlpha = Math.min(1, 0.4 + frac);
+          ctx.translate(W / 2, H * 0.45);
+          ctx.scale(s, s);
+          drawOutlinedFormula(ctx, txt, 0, 0, 72, State.countdown > 0 ? '#7df9ff' : '#00ffaa', '#011638', 10);
+          ctx.restore();
+          if (State.countdown > 0) {
+            drawClearBadge(ctx, W / 2, H * 0.45 + 62, '👆 Desliza el dedo para mover a Calcio', '#00d9ff', 'rgba(2, 12, 32, 0.92)', 12, '#ffffff');
+          }
+        }
+
+        // Destello de pantalla
+        if (this.flashAlpha > 0) {
+          ctx.save();
+          ctx.globalAlpha = this.flashAlpha;
+          ctx.fillStyle = this.flashColor;
+          ctx.fillRect(0, 0, W, H);
+          ctx.restore();
+        }
+      }
+    };
+
+    /* ==========================================================================
+       3c. VIDA MARINA AMBIENTAL (PARALLAX): CARDÚMENES, MEDUSAS Y PLANCTON
+       ========================================================================== */
+    const Ambient = {
+      fish: [],
+      jellies: [],
+      plankton: [],
+
+      init() {
+        this.fish = Array.from({ length: 4 }, () => this.newSchool(true));
+        this.jellies = Array.from({ length: 3 }, () => ({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          s: 12 + Math.random() * 14,
+          ph: Math.random() * 6,
+          hue: Math.random() < 0.5 ? '255, 110, 199' : '157, 140, 255'
+        }));
+        this.plankton = Array.from({ length: 45 }, () => ({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          r: 0.6 + Math.random() * 1.6,
+          s: 0.2 + Math.random() * 0.8,
+          tw: Math.random() * 6
+        }));
+      },
+
+      newSchool(randomX) {
+        const dir = Math.random() < 0.5 ? 1 : -1;
+        return {
+          x: randomX ? Math.random() * W : (dir === 1 ? -140 : W + 140),
+          y: 140 + Math.random() * (H * 0.65),
+          dir,
+          speed: 0.5 + Math.random() * 1.0,
+          n: 4 + Math.floor(Math.random() * 5),
+          size: 6 + Math.random() * 7,
+          col: Math.random() < 0.5 ? 'rgba(6, 24, 52, 0.55)' : 'rgba(170, 235, 255, 0.3)',
+          ph: Math.random() * 6
+        };
+      },
+
+      update(scroll) {
+        this.fish.forEach((f, i) => {
+          f.x += f.speed * f.dir;
+          f.y += scroll * 0.25;
+          f.ph += 0.18;
+          if (f.x < -220 || f.x > W + 220 || f.y > H + 60) this.fish[i] = this.newSchool(false);
+        });
+        this.jellies.forEach(j => {
+          j.ph += 0.03;
+          j.y += scroll * 0.35 - Math.max(0, Math.sin(j.ph)) * 0.7;
+          j.x += Math.sin(j.ph * 0.5) * 0.3;
+          if (j.y > H + 70) { j.y = -60; j.x = Math.random() * W; }
+          if (j.y < -90) { j.y = H + 50; j.x = Math.random() * W; }
+        });
+        this.plankton.forEach(p => {
+          p.y += scroll * 0.5 * p.s + 0.12;
+          p.tw += 0.05;
+          if (p.y > H) { p.y = 0; p.x = Math.random() * W; }
+        });
+      },
+
+      draw(ctx) {
+        // Plancton brillante
+        ctx.save();
+        this.plankton.forEach(p => {
+          ctx.globalAlpha = 0.25 + Math.abs(Math.sin(p.tw)) * 0.45;
+          ctx.fillStyle = '#c8f7ff';
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        ctx.restore();
+
+        // Cardúmenes de peces
+        this.fish.forEach(f => {
+          for (let k = 0; k < f.n; k++) {
+            const fx = f.x - f.dir * k * f.size * 2.3;
+            const fy = f.y + Math.sin(k * 1.7) * f.size * 1.8;
+            ctx.save();
+            ctx.translate(fx, fy);
+            ctx.scale(f.dir, 1);
+            ctx.fillStyle = f.col;
+            ctx.beginPath();
+            ctx.ellipse(0, 0, f.size, f.size * 0.45, 0, 0, Math.PI * 2);
+            ctx.fill();
+            const wag = Math.sin(f.ph + k) * f.size * 0.25;
+            ctx.beginPath();
+            ctx.moveTo(-f.size * 0.8, 0);
+            ctx.lineTo(-f.size * 1.6, -f.size * 0.45 + wag);
+            ctx.lineTo(-f.size * 1.6, f.size * 0.45 + wag);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+          }
+        });
+
+        // Medusas bioluminiscentes
+        this.jellies.forEach(j => {
+          ctx.save();
+          ctx.translate(j.x, j.y);
+          const pulse = 1 + Math.sin(j.ph) * 0.12;
+          const g = ctx.createRadialGradient(0, -j.s * 0.2, 1, 0, 0, j.s * 1.7);
+          g.addColorStop(0, `rgba(${j.hue}, 0.45)`);
+          g.addColorStop(1, `rgba(${j.hue}, 0)`);
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.arc(0, 0, j.s * 1.7, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = `rgba(${j.hue}, 0.5)`;
+          ctx.beginPath();
+          ctx.ellipse(0, 0, j.s * pulse, (j.s * 0.75) / pulse, 0, Math.PI, 0);
+          ctx.closePath();
+          ctx.fill();
+          ctx.strokeStyle = `rgba(${j.hue}, 0.45)`;
+          ctx.lineWidth = 1.6;
+          for (let t = 0; t < 4; t++) {
+            const tx = (t - 1.5) * j.s * 0.4;
+            ctx.beginPath();
+            ctx.moveTo(tx, 0);
+            for (let s = 1; s <= 5; s++) ctx.lineTo(tx + Math.sin(j.ph * 2 + s + t) * 3, s * j.s * 0.38);
+            ctx.stroke();
+          }
+          ctx.restore();
+        });
+      }
+    };
+    Ambient.init();
+    window.addEventListener('resize', () => Ambient.init());
+
+    /* ==========================================================================
+       FUNCIÓN AUXILIAR: ETIQUETAS Y NOMBRES CLAROS (PÍLDORAS DE ALTO CONTRASTE)
+       ========================================================================== */
+    function drawClearBadge(ctx, x, y, text, borderColor = '#00d9ff', bgColor = 'rgba(2, 10, 28, 0.92)', fontSize = 11.5, textColor = '#ffffff') {
+      ctx.save();
+      ctx.font = `900 ${fontSize}px "Fredoka", "Nunito", sans-serif`;
+      const padX = 10;
+      const textW = ctx.measureText(text).width;
+      const boxW = textW + padX * 2;
+      const boxH = fontSize + 9;
+      const rx = x - boxW / 2;
+      const ry = y - boxH / 2;
+      const rad = boxH / 2;
+
+      // Sombra exterior brillante
+      ctx.shadowColor = borderColor;
+      ctx.shadowBlur = 8;
+
+      // Fondo redondeado oscuro de alto contraste
+      ctx.fillStyle = bgColor;
+      ctx.beginPath();
+      ctx.roundRect(rx, ry, boxW, boxH, rad);
+      ctx.fill();
+
+      // Borde neón nítido
+      ctx.shadowBlur = 0;
+      ctx.strokeStyle = borderColor;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Texto con contorno oscuro para máxima legibilidad
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.strokeStyle = '#010612';
+      ctx.lineWidth = 3;
+      ctx.strokeText(text, x, y + 0.5);
+      ctx.fillStyle = textColor;
+      ctx.fillText(text, x, y + 0.5);
+      ctx.restore();
+    }
+
+    function drawOutlinedFormula(ctx, text, x, y, fontSize = 16, fill = '#ffffff', stroke = '#020b1e', strokeW = 4) {
+      ctx.save();
+      ctx.font = `900 ${fontSize}px "Fredoka", "Nunito", sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.strokeStyle = stroke;
+      ctx.lineWidth = strokeW;
+      ctx.lineJoin = 'round';
+      ctx.strokeText(text, x, y);
+      ctx.fillStyle = fill;
+      ctx.fillText(text, x, y);
+      ctx.restore();
+    }
+
+    /* ==========================================================================
+       4. EL JUGADOR: CALCIO (Ca²⁺) Y SUS AMIGOS CLORUROS (Cl⁻)
+       ========================================================================== */
+    const Player = {
+      x: W / 2,
+      y: H * 0.73,
+      r: 30,
+      targetX: W / 2,
+      rot: 0,
+      bondedCl: 0,
+
+      update() {
+        this.rot += 0.045;
+        this.x += (this.targetX - this.x) * 0.22;
+        if (this.x < 45) this.x = 45;
+        if (this.x > W - 45) this.x = W - 45;
+        this.y = H * 0.73;
+
+        // Estela de propulsión de burbujas al surfear con el crustáceo
+        if (State.surfTimer > 0 && Math.random() < 0.7) {
+          World.particles.push({
+            x: this.x + (Math.random() - 0.5) * 24,
+            y: this.y + 46,
+            vx: (Math.random() - 0.5) * 1.8,
+            vy: 4 + Math.random() * 4.5,
+            r: 3.5 + Math.random() * 4.5,
+            alpha: 0.9,
+            color: Math.random() < 0.5 ? '#00d9ff' : '#ffb703'
+          });
+        }
+      },
+
+      draw(ctx) {
+        const skin = SaveData.getSkin();
+        ctx.save();
+        ctx.translate(this.x, this.y);
+
+        // Onda magnética si tiene mejorado el Imán de Solvatación
+        if (SaveData.upgrades.magnet > 0) {
+          const magR = 65 + SaveData.upgrades.magnet * 28;
+          const pulse = (Date.now() % 1200) / 1200;
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(0, 0, magR * (0.6 + pulse * 0.4), 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(0, 229, 255, ${(1 - pulse) * 0.35})`;
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        // Si está cabalgando sobre el crustáceo al final del nivel (Pág. 24)
+        if (State.surfTimer > 0) {
+          const blink = (State.surfTimer < 2.0 && Math.floor(Date.now() / 120) % 2 === 0);
+          if (!blink) {
+            drawCrustacean(ctx, 0, this.r * 0.95, 1.3, true);
+          }
+        }
+
+        // Escudo de sal CaCl2 (Power-Up cuando tiene 2 Cloruros)
+        if (State.shieldTimer > 0) {
+          ctx.save();
+          ctx.strokeStyle = '#00ffaa';
+          ctx.lineWidth = 3.5;
+          ctx.setLineDash([8, 6]);
+          ctx.beginPath();
+          ctx.arc(0, 0, this.r * 2.35, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.fillStyle = 'rgba(0, 255, 170, 0.14)';
+          ctx.fill();
+          ctx.restore();
+        }
+
+        // Halo de solvatación atómica personalizado según la Skin equipada
+        const halo = ctx.createRadialGradient(0, 0, this.r * 0.3, 0, 0, this.r * 2.4);
+        halo.addColorStop(0, State.surfTimer > 0 ? 'rgba(255, 190, 50, 0.75)' : skin.haloRgba);
+        halo.addColorStop(0.55, State.surfTimer > 0 ? 'rgba(255, 110, 0, 0.25)' : 'rgba(0, 110, 255, 0.2)');
+        halo.addColorStop(1, 'transparent');
+        ctx.fillStyle = halo;
+        ctx.beginPath();
+        ctx.arc(0, 0, this.r * 2.4, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Amigos Cloruros (Cl⁻) unidos a los lados con enlace iónico
+        if (this.bondedCl >= 1) this.drawClBuddy(-64, 2);
+        if (this.bondedCl >= 2) this.drawClBuddy(64, 2);
+
+        // Anillos orbitales 3D con electrones brillantes según la Skin
+        const activeRingCol = State.surfTimer > 0 ? '#ffd166' : skin.ringColor;
+        for (let i = 0; i < 2; i++) {
+          ctx.save();
+          const angle = this.rot * (i === 0 ? 1 : -0.85) + i * 1.55;
+          ctx.rotate(angle);
+          ctx.beginPath();
+          ctx.ellipse(0, 0, this.r * 1.6, this.r * 0.68, 0, 0, Math.PI * 2);
+          ctx.strokeStyle = activeRingCol;
+          ctx.lineWidth = 2.8;
+          ctx.shadowColor = activeRingCol;
+          ctx.shadowBlur = 8;
+          ctx.stroke();
+
+          // Electrón orbitando en el anillo
+          const ex = Math.cos(this.rot * 2 + i * 3) * (this.r * 1.6);
+          const ey = Math.sin(this.rot * 2 + i * 3) * (this.r * 0.68);
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.arc(ex, ey, 4, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+
+        // Esfera 3D principal de CALCIO (Ca²⁺) con los colores de la Skin equipada
+        const g = ctx.createRadialGradient(-this.r * 0.35, -this.r * 0.38, this.r * 0.08, 0, 0, this.r);
+        g.addColorStop(0, skin.c0);
+        g.addColorStop(0.28, skin.c1);
+        g.addColorStop(0.75, skin.c2);
+        g.addColorStop(1, skin.c3);
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(0, 0, this.r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+        ctx.strokeStyle = '#020b1e';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.arc(0, 0, this.r + 1.5, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Corona Real si lleva la Skin "Calcio Rey Supernova"
+        if (skin.crown) {
+          ctx.save();
+          ctx.fillStyle = '#ffd166';
+          ctx.strokeStyle = '#020b1e';
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.moveTo(-14, -this.r + 3);
+          ctx.lineTo(-17, -this.r - 13);
+          ctx.lineTo(-7, -this.r - 5);
+          ctx.lineTo(0, -this.r - 16);
+          ctx.lineTo(7, -this.r - 5);
+          ctx.lineTo(17, -this.r - 13);
+          ctx.lineTo(14, -this.r + 3);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        // Brillo cristalino superior (efecto esfera de cristal 3D)
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+        ctx.beginPath();
+        ctx.ellipse(-this.r * 0.3, -this.r * 0.35, this.r * 0.32, this.r * 0.18, -0.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Símbolo químico grande y nítido Ca²⁺
+        drawOutlinedFormula(ctx, 'Ca²⁺', 0, 1, 19, '#ffffff', '#011638', 4.5);
+
+        // Etiqueta inferior clara con el nombre completo de CALCIO
+        if (State.surfTimer > 0) {
+          drawClearBadge(ctx, 0, this.r + 48, '🦐 CALCIO EN CRUSTÁCEO', '#ffd166', 'rgba(40, 18, 0, 0.94)', 11.5, '#ffe066');
+        } else if (this.bondedCl >= 2) {
+          drawClearBadge(ctx, 0, this.r + 19, '🛡️ CLORURO DE CALCIO (CaCl₂)', '#00ffaa', 'rgba(2, 24, 18, 0.94)', 11, '#aaffdd');
+        } else if (this.bondedCl === 1) {
+          drawClearBadge(ctx, 0, this.r + 19, '⚛️ CALCIO + 1 CLORURO', activeRingCol, 'rgba(2, 12, 32, 0.94)', 11.5, '#ffffff');
+        } else {
+          drawClearBadge(ctx, 0, this.r + 19, `${skin.icon} ${skin.name.toUpperCase()} (Ca²⁺)`, activeRingCol, 'rgba(2, 12, 32, 0.94)', 11.5, '#ffffff');
+        }
+
+        ctx.restore();
+      },
+
+      drawClBuddy(ox, oy) {
+        ctx.save();
+        // Enlace químico punteado brillante entre Calcio y Cloruro
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(ox, oy);
+        ctx.strokeStyle = '#00ffaa';
+        ctx.lineWidth = 3.5;
+        ctx.setLineDash([5, 4]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.translate(ox, oy);
+        const rBuddy = 17;
+        const g = ctx.createRadialGradient(-4, -5, 2, 0, 0, rBuddy);
+        g.addColorStop(0, '#ffffff');
+        g.addColorStop(0.35, '#00ffaa');
+        g.addColorStop(0.85, '#008855');
+        g.addColorStop(1, '#003d22');
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(0, 0, rBuddy, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#020b1e';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // Símbolo Cl⁻ claro y etiqueta CLORURO
+        drawOutlinedFormula(ctx, 'Cl⁻', 0, 1, 13, '#ffffff', '#002b19', 3.5);
+        drawClearBadge(ctx, 0, rBuddy + 12, 'CLORURO', '#00ffaa', 'rgba(2, 20, 14, 0.92)', 9.5, '#b8ffe0');
+        ctx.restore();
+      }
+    };
+
+    /* ==========================================================================
+       5. MUNDO SUBMARINO CONTINUO Y GENERADOR POR ETAPAS DEL LIBRO
+       ========================================================================== */
+    const World = {
+      items: [],
+      obstacles: [],
+      chonPortals: [],
+      crustaceans: [],
+      particles: [],
+      floatingTexts: [],
+      bgBubbles: [],
+      crystals: [],
+      powerups: [],
+      warnings: [],
+      rings: [],
+      spawnTimer: 0,
+      crystalTimer: 0,
+      powerTimer: 0,
+      lastObLane: -1,
+
+      init() {
+        this.items = [];
+        this.obstacles = [];
+        this.chonPortals = [];
+        this.crustaceans = [];
+        this.particles = [];
+        this.floatingTexts = [];
+        this.crystals = [];
+        this.powerups = [];
+        this.warnings = [];
+        this.rings = [];
+        this.bgBubbles = Array.from({ length: 28 }, () => ({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          r: 2 + Math.random() * 5,
+          speed: 1 + Math.random() * 2.2
+        }));
+        this.spawnTimer = 0;
+        this.crystalTimer = 0.8;
+        this.powerTimer = 6 + Math.random() * 4;
+        this.lastObLane = -1;
+      },
+
+      laneX() {
+        return [W * 0.22, W * 0.5, W * 0.78];
+      },
+
+      addRing(x, y, color, max = 55) {
+        this.rings.push({ x, y, r: 10, max, alpha: 0.9, color });
+      },
+
+      useExtraLife(x, y) {
+        Fun.extraLife--;
+        State.invulnTimer = 1.6;
+        Fun.shake = 13;
+        Fun.flash('#ff4d8d', 0.45);
+        buzz(120);
+        audio.playCrash();
+        createExplosion(x, y, '#ff4d8d');
+        this.floatingTexts.push({ text: '💖 ¡VIDA EXTRA USADA!', x: Player.x, y: Player.y - 75, life: 1.3, color: '#ff8fb8', scale: 1.7 });
+      },
+
+      addLevelProgress(amount = 1) {
+        if (State.endlessMode) return;
+        const goal = STAGE_GOALS[State.zone] || 10;
+        State.stageCollected += amount;
+
+        if (State.stageCollected >= goal) {
+          if (State.zone < 4) {
+            const prev = State.zone;
+            State.zone++;
+            State.stageCollected = 0;
+            State.hudZoneSet = false;
+            // Limpiar obstáculos cercanos al subir de nivel para una transición justa y limpia
+            this.obstacles = [];
+            this.warnings = [];
+            Fun.gain(250, W / 2, H * 0.45, `🎉 ¡SUBISTE AL NIVEL ${State.zone}!`, '#00ffaa', false);
+            Fun.flash('#00ffaa', 0.35);
+            audio.playShield();
+            buzz(60);
+            if (State.zone === 4) {
+              // Al entrar al Nivel 4 Final, aparece de inmediato el primer Crustáceo
+              this.crustaceans.push({ x: W * 0.5, y: -50, r: 30 });
+            }
+          } else {
+            // Completó los 3 Crustáceos del Nivel 4 Final -> ¡Victoria!
+            State.stageCollected = goal;
+            triggerVictory();
+          }
+        }
+      },
+
+      update() {
+        const dt = 0.016;
+
+        // Velocidad progresiva suave según el nivel actual
+        State.speed = 4.3 + (State.zone - 1) * 0.45;
+        let factor = 1;
+        if (State.surfTimer > 0) factor *= 1.38;
+        if (Fun.pu.rocket > 0) factor *= 1.9;
+        if (Fun.pu.slow > 0) factor *= 0.6;
+        const curSpeed = State.speed * factor;
+        State.curSpeed = curSpeed;
+        const mult = SaveData.getMultiplier();
+
+        State.distance += curSpeed * 0.034;
+        State.bgScrollY = (State.bgScrollY + curSpeed * 0.7) % H;
+        State.score += Math.round(curSpeed * 0.08 * mult * (Fun.pu.double > 0 ? 2 : 1));
+
+        Fun.update(dt, curSpeed);
+        Missions.report('distance', Math.floor(State.distance - State.startDist), true);
+
+        const invincible = State.surfTimer > 0 || Fun.pu.rocket > 0;
+
+        // Textos limpios del HUD por Nivel (subes de nivel recolectando, no por distancia)
+        if (!State.hudZoneSet) {
+          State.hudZoneSet = true;
+          const hudTexts = {
+            1: ["Nivel 1 · Agua (H₂O)", "Atrapa 12 moléculas de Agua (H₂O) para subir de nivel", "💧"],
+            2: ["Nivel 2 · Cloruros (Cl⁻)", "Atrapa 10 Cloruros (Cl⁻) para formar CaCl₂ y subir de nivel", "🛡️"],
+            3: ["Nivel 3 · Aminoácidos (CHON)", "Supera 8 Aminoácidos (CHON) o Agua (H₂O) para subir de nivel", "🧬"],
+            4: ["Nivel 4 Final · ¡Crustáceos!", "¡Móntate en 3 Crustáceos 🦐 para escapar del Depredador!", "🦐"]
+          };
+          const ht = hudTexts[State.zone];
+          document.getElementById('hudChapterTitle').textContent = ht[0];
+          document.getElementById('hudMissionText').textContent = ht[1];
+          document.getElementById('hudFlaskIcon').textContent = ht[2];
+        }
+
+        // HUD Principal: muestra cuántos ítems llevas recolectados para subir de nivel
+        const goal = STAGE_GOALS[State.zone] || 10;
+        const icons = { 1: '💧', 2: '🧪', 3: '🧬', 4: '🦐' };
+        const progressText = State.endlessMode
+          ? `Modo Libre ∞`
+          : `${Math.min(goal, State.stageCollected)} / ${goal} ${icons[State.zone]}`;
+        document.getElementById('hudDistance').textContent = progressText;
+        document.getElementById('hudScoreVal').textContent = `${State.score} PTS`;
+        const pct = State.endlessMode
+          ? 100
+          : Math.min(100, (State.stageCollected / goal) * 100);
+        document.getElementById('hudProgressBar').style.width = `${pct}%`;
+
+        // Temporizadores
+        if (State.shieldTimer > 0) State.shieldTimer -= dt;
+        if (State.surfTimer > 0) State.surfTimer -= dt;
+
+        // Píldora inferior de guía e información
+        State.guideTick = (State.guideTick || 0) + 1;
+        if (State.guideTick % 15 === 0) {
+          const guideEl = document.getElementById('hudGuideText');
+          if (Fun.pu.rocket > 0) {
+            guideEl.innerHTML = `🚀 <b style="color:#ff6ec7;">¡CORRIENTE MARINA!</b> Vuelas a toda velocidad y destruyes todo a tu paso.`;
+          } else if (State.surfTimer > 0) {
+            guideEl.innerHTML = `🦐 <b style="color:#ffd166;">¡PASEO EN CRUSTÁCEO! (${Math.ceil(State.surfTimer)}s)</b> Calcio y sus Cloruros son invencibles.`;
+          } else if (State.shieldTimer > 0) {
+            guideEl.innerHTML = `🛡️ <b style="color:#00ffaa;">¡CLORURO DE CALCIO (CaCl₂)! (${Math.ceil(State.shieldTimer)}s)</b> El escudo salino aguanta un golpe.`;
+          } else if (State.zone === 4) {
+            guideEl.innerHTML = `🦐 <b style="color:#ffd166;">¡NIVEL FINAL!</b> Móntate en los <b>Crustáceos (${State.stageCollected}/${goal})</b> para ganar.`;
+          } else if (Fun.combo >= 5) {
+            guideEl.innerHTML = `🔥 <b style="color:#ffb703;">¡Combo x${Fun.combo}!</b> Sigue recolectando para subir al Nivel ${State.zone + 1}.`;
+          } else {
+            const actionHint = State.zone === 1 ? 'Atrapa 💧 Agua (H₂O)' : (State.zone === 2 ? 'Atrapa 🧪 Cloruros (Cl⁻)' : 'Supera 🧬 CHON y 💧 Agua');
+            guideEl.innerHTML = `<b>${actionHint} (${State.stageCollected}/${goal})</b> para pasar al Nivel ${State.zone + 1}.`;
+          }
+        }
+
+        // Desplazamiento del fondo
+        this.bgBubbles.forEach(b => {
+          b.y += curSpeed * b.speed * 0.5;
+          if (b.y > H + 10) { b.y = -10; b.x = Math.random() * W; }
+        });
+
+        // Spawn continuo de entidades según la etapa actual
+        this.spawnTimer += dt * (Fun.pu.slow > 0 ? 0.6 : 1) * (Fun.pu.rocket > 0 ? 1.6 : 1);
+        if (this.spawnTimer > (0.98 / (1 + (State.zone - 1) * 0.08))) {
+          this.spawnTimer = 0;
+          this.spawnRow();
+        }
+
+        // Patrones de Cristales de Calcita
+        this.crystalTimer -= dt;
+        if (this.crystalTimer <= 0) {
+          this.spawnCrystalPattern();
+          this.crystalTimer = 1.4 + Math.random() * 1.2;
+        }
+
+        // Burbujas de Power-Up
+        this.powerTimer -= dt;
+        if (this.powerTimer <= 0) {
+          this.spawnPowerup();
+          this.powerTimer = (11 + Math.random() * 6) * (1 - (SaveData.upgrades.luck || 0) * 0.08);
+        }
+
+        // Alertas del Depredador -> aparece tras el aviso
+        for (let i = this.warnings.length - 1; i >= 0; i--) {
+          const w = this.warnings[i];
+          w.t -= dt;
+          if (w.t <= 0) {
+            this.obstacles.push({
+              type: 'SHARK', name: '🦈', fullName: 'GRAN DEPREDADOR', color: '#ff2a55',
+              x: w.x, y: -60, r: 32, spd: 1.55
+            });
+            this.warnings.splice(i, 1);
+          }
+        }
+
+        // Actualizar crustáceos (Exclusivos del Nivel 4 Final)
+        for (let i = this.crustaceans.length - 1; i >= 0; i--) {
+          const cr = this.crustaceans[i];
+          cr.y += curSpeed * 0.92;
+          cr.x += Math.sin(cr.y * 0.035) * 1.1;
+
+          const d = Math.hypot(Player.x - cr.x, Player.y - cr.y);
+          if (d < Player.r + cr.r + 6) {
+            audio.playCrustaceanRide();
+            State.surfTimer = 10.0 + (SaveData.upgrades.crustacean || 0) * 2.5;
+            Player.bondedCl = 2;
+            Fun.stat('crustaceans');
+            Fun.gain(350, Player.x, Player.y - 55, '🦐 ¡PASEO EN CRUSTÁCEO!', '#ffd166');
+            Fun.flash('#ffb703', 0.3);
+            buzz(40);
+            createExplosion(cr.x, cr.y, '#ff9e00');
+            this.addRing(cr.x, cr.y, '#ffd166', 80);
+            this.crustaceans.splice(i, 1);
+            if (State.zone === 4) {
+              this.addLevelProgress(1);
+              if (!State.running) return;
+            }
+            continue;
+          }
+
+          if (cr.y > H + 90) this.crustaceans.splice(i, 1);
+        }
+
+        // Rango del Imán (mejora permanente o power-up temporal)
+        const magnetLvl = SaveData.upgrades.magnet || 0;
+        let magnetRadius = magnetLvl > 0 ? 75 + magnetLvl * 35 : 0;
+        let pullStrength = 3.2 + magnetLvl * 1.1;
+        if (Fun.pu.magnet > 0 || Fun.pu.rocket > 0) {
+          magnetRadius = Math.max(magnetRadius, 250);
+          pullStrength = Math.max(pullStrength, 9);
+        }
+
+        // Actualizar ítems (Agua H2O, Cloruro Cl-)
+        for (let i = this.items.length - 1; i >= 0; i--) {
+          const it = this.items[i];
+          it.y += curSpeed;
+
+          const dx = Player.x - it.x;
+          const dy = Player.y - it.y;
+          const d = Math.hypot(dx, dy);
+
+          if (magnetRadius > 0 && d < magnetRadius && d > 1) {
+            it.x += (dx / d) * pullStrength;
+            it.y += (dy / d) * pullStrength;
+          }
+
+          if (d < Player.r + it.r + 6) {
+            audio.playCollect();
+            if (it.type === 'H2O') {
+              Fun.stat('h2o');
+              Fun.gain(50, it.x, it.y, '💧 AGUA', '#66eeff');
+              createExplosion(it.x, it.y, '#00d9ff');
+              this.addRing(it.x, it.y, '#66eeff');
+              // En Nivel 1 y Nivel 3, agarrar Agua (H2O) te hace avanzar de nivel
+              if (State.zone === 1 || State.zone === 3) {
+                this.addLevelProgress(1);
+              }
+            } else if (it.type === 'Cl') {
+              Player.bondedCl = Math.min(2, Player.bondedCl + 1);
+              Fun.stat('cl');
+              Fun.gain(150, it.x, it.y, '🧪 CLORURO', '#00ffaa');
+              createExplosion(it.x, it.y, '#00ffaa');
+              this.addRing(it.x, it.y, '#00ffaa');
+              if (Player.bondedCl >= 2) {
+                State.shieldTimer = 9.0 + (SaveData.upgrades.shield || 0) * 2.5;
+                audio.playShield();
+                Fun.flash('#00ffaa', 0.2);
+                this.floatingTexts.push({
+                  text: '🛡️ ¡CLORURO DE CALCIO (CaCl₂)!',
+                  x: Player.x,
+                  y: Player.y - 70,
+                  life: 1.3,
+                  color: '#00ffaa',
+                  scale: 1.5
+                });
+              }
+              // En Nivel 2, agarrar Cloruros (Cl-) te hace avanzar de nivel
+              if (State.zone === 2) {
+                this.addLevelProgress(1);
+              }
+            }
+            this.items.splice(i, 1);
+            continue;
+          }
+
+          if (it.y > H + 60) this.items.splice(i, 1);
+        }
+
+        // Cristales de Calcita
+        for (let i = this.crystals.length - 1; i >= 0; i--) {
+          const c = this.crystals[i];
+          c.y += curSpeed;
+          c.rot += 0.09;
+          const dx = Player.x - c.x;
+          const dy = Player.y - c.y;
+          const d = Math.hypot(dx, dy);
+          if (magnetRadius > 0 && d < magnetRadius && d > 1) {
+            c.x += (dx / d) * pullStrength * 1.3;
+            c.y += (dy / d) * pullStrength * 1.3;
+          }
+          if (d < Player.r + 16) {
+            Fun.stat('crystals');
+            Fun.gain(10, c.x, c.y, null, null, true);
+            audio.playCrystal(Fun.combo);
+            for (let k = 0; k < 4; k++) {
+              this.particles.push({
+                x: c.x, y: c.y,
+                vx: (Math.random() - 0.5) * 4, vy: (Math.random() - 0.5) * 4,
+                r: 1.5 + Math.random() * 2, alpha: 1, color: Math.random() < 0.5 ? '#ffffff' : '#7df9ff'
+              });
+            }
+            this.crystals.splice(i, 1);
+            continue;
+          }
+          if (c.y > H + 30) this.crystals.splice(i, 1);
+        }
+
+        // Burbujas de Power-Up
+        for (let i = this.powerups.length - 1; i >= 0; i--) {
+          const p = this.powerups[i];
+          p.y += curSpeed * 0.85;
+          p.ph += 0.08;
+          const d = Math.hypot(Player.x - p.x, Player.y - p.y);
+          if (d < Player.r + 28) {
+            Fun.activatePowerup(p.type);
+            this.addRing(p.x, p.y, POWERUP_TYPES[p.type].color, 110);
+            createExplosion(p.x, p.y, POWERUP_TYPES[p.type].color);
+            this.powerups.splice(i, 1);
+            continue;
+          }
+          if (p.y > H + 60) this.powerups.splice(i, 1);
+        }
+
+        // Actualizar obstáculos (Sodio Na+, Potasio K+, Roca de Sal, Gran Depredador)
+        for (let i = this.obstacles.length - 1; i >= 0; i--) {
+          const ob = this.obstacles[i];
+          ob.y += curSpeed * (ob.spd || 1);
+          if (ob.wob) ob.x = ob.baseX + Math.sin(ob.y * 0.018 + ob.ph) * W * 0.13;
+
+          const d = Math.hypot(Player.x - ob.x, Player.y - ob.y);
+          if (d < Player.r + ob.r - 4) {
+            if (invincible) {
+              audio.playCollect();
+              Fun.gain(150 + (SaveData.upgrades.crustacean || 0) * 45, ob.x, ob.y,
+                Fun.pu.rocket > 0 ? '🚀 ¡EMBESTIDA!' : '💥 ¡TURBO CRUSTÁCEO!', '#ffd166');
+              createExplosion(ob.x, ob.y, '#ff9e00');
+              this.addRing(ob.x, ob.y, '#ff9e00', 70);
+              Fun.shake = Math.max(Fun.shake, 5);
+              this.obstacles.splice(i, 1);
+              continue;
+            } else if (State.invulnTimer > 0) {
+              // Parpadeo de invulnerabilidad: lo atraviesa
+            } else if (State.shieldTimer > 0) {
+              audio.playCollect();
+              Fun.gain(100, ob.x, ob.y, '🛡️ ¡ESCUDO CaCl₂!', '#00ffaa');
+              State.shieldTimer = 0;
+              State.invulnTimer = 0.6;
+              Fun.shake = Math.max(Fun.shake, 7);
+              createExplosion(ob.x, ob.y, '#00ffaa');
+              this.addRing(ob.x, ob.y, '#00ffaa', 80);
+              this.obstacles.splice(i, 1);
+              continue;
+            } else if (Fun.extraLife > 0) {
+              this.useExtraLife(ob.x, ob.y);
+              this.obstacles.splice(i, 1);
+              continue;
+            } else {
+              triggerCrash();
+              return;
+            }
+          } else if (!ob.passed && ob.y > Player.y + 4) {
+            ob.passed = true;
+            const gap = Math.abs(ob.x - Player.x) - (Player.r + ob.r);
+            if (gap < 18 && !invincible && State.invulnTimer <= 0) {
+              Fun.stat('nearMiss');
+              Fun.gain(40, Player.x, Player.y - 80, '😎 ¡ESQUIVE PERFECTO!', '#7df9ff');
+              audio.playWhoosh();
+            }
+          }
+
+          if (ob.y > H + 70) this.obstacles.splice(i, 1);
+        }
+
+        // Actualizar CHON (Macromoléculas de aminoácidos)
+        for (let i = this.chonPortals.length - 1; i >= 0; i--) {
+          const ch = this.chonPortals[i];
+          ch.y += curSpeed * 0.82;
+          ch.rot += 0.022;
+
+          const d = Math.hypot(Player.x - ch.x, Player.y - ch.y);
+          if (d > ch.r * 0.6 && d < ch.r * 1.65 && !ch.scored) {
+            ch.scored = true;
+            audio.playShield();
+            Fun.stat('chon');
+            Fun.gain(300, ch.x, ch.y, '🧬 ¡AMINOÁCIDO CHON!', '#00e5ff');
+            createExplosion(ch.x, ch.y, '#00d9ff');
+            this.addRing(ch.x, ch.y, '#ff2a85', 100);
+            if (State.zone === 3) {
+              this.addLevelProgress(1);
+            }
+          } else if (d <= ch.r * 0.52) {
+            if (invincible) {
+              if (!ch.scored) {
+                ch.scored = true;
+                Fun.stat('chon');
+                Fun.gain(300, ch.x, ch.y, '🧬 ¡AMINOÁCIDO CHON!', '#00e5ff');
+                audio.playShield();
+                if (State.zone === 3) {
+                  this.addLevelProgress(1);
+                }
+              }
+            } else if (State.invulnTimer > 0) {
+              // Atraviesa sin daño
+            } else if (State.shieldTimer > 0) {
+              State.shieldTimer = 0;
+              State.invulnTimer = 0.6;
+              audio.playCollect();
+              createExplosion(ch.x, ch.y, '#ff2a85');
+              this.chonPortals.splice(i, 1);
+              continue;
+            } else if (Fun.extraLife > 0) {
+              this.useExtraLife(ch.x, ch.y);
+              this.chonPortals.splice(i, 1);
+              continue;
+            } else {
+              triggerCrash();
+              return;
+            }
+          }
+
+          if (ch.y > H + 130) this.chonPortals.splice(i, 1);
+        }
+
+        // Actualizar partículas
+        for (let i = this.particles.length - 1; i >= 0; i--) {
+          const p = this.particles[i];
+          p.x += p.vx;
+          p.y += p.vy;
+          p.alpha -= 0.025;
+          if (p.alpha <= 0) this.particles.splice(i, 1);
+        }
+
+        // Ondas expansivas
+        for (let i = this.rings.length - 1; i >= 0; i--) {
+          const r = this.rings[i];
+          r.r += (r.max - r.r) * 0.15 + 1;
+          r.alpha -= 0.04;
+          if (r.alpha <= 0) this.rings.splice(i, 1);
+        }
+
+        // Actualizar textos flotantes
+        for (let i = this.floatingTexts.length - 1; i >= 0; i--) {
+          const ft = this.floatingTexts[i];
+          ft.y -= 1.15;
+          ft.life -= 0.02;
+          if (ft.scale && ft.scale > 1) ft.scale = Math.max(1, ft.scale - 0.06);
+          if (ft.life <= 0) this.floatingTexts.splice(i, 1);
+        }
+        if (this.floatingTexts.length > 14) this.floatingTexts.splice(0, this.floatingTexts.length - 14);
+      },
+
+      spawnRow() {
+        const laneX = this.laneX();
+        const laneIdx = Math.floor(Math.random() * 3);
+        const chosenLane = laneX[laneIdx];
+        this.lastObLane = laneIdx;
+
+        const makeIon = (x, wob) => {
+          const isNa = Math.random() < 0.5;
+          return {
+            type: isNa ? 'NA' : 'K',
+            name: isNa ? 'Na⁺' : 'K⁺',
+            fullName: isNa ? 'SODIO (Na⁺)' : 'POTASIO (K⁺)',
+            color: isNa ? '#ff922b' : '#cc5de8',
+            x, y: -50, r: 24,
+            wob, baseX: x, ph: Math.random() * 6
+          };
+        };
+        const makeRock = (x) => ({
+          type: 'ROCK', name: '🪨', fullName: 'ROCA DE SAL', color: '#64748b', x, y: -50, r: 27
+        });
+
+        if (State.zone === 1) {
+          // NIVEL 1: Agua (H2O), Sodio (Na+) y Potasio (K+)
+          if (Math.random() < 0.6) {
+            this.items.push({ type: 'H2O', x: chosenLane, y: -50, r: 20 });
+          } else {
+            this.obstacles.push(makeIon(chosenLane, State.stageCollected >= 4 && Math.random() < 0.3));
+          }
+        } else if (State.zone === 2) {
+          // NIVEL 2: Cloruros (Cl-), Rocas de Sal y muros con hueco libre
+          const r = Math.random();
+          if (r < 0.20) {
+            const freeIdx = Math.floor(Math.random() * 3);
+            laneX.forEach((lx, idx) => {
+              if (idx !== freeIdx) this.obstacles.push(makeRock(lx));
+            });
+            this.items.push({ type: 'Cl', x: laneX[freeIdx], y: -50, r: 21 });
+            this.lastObLane = (freeIdx + 1) % 3;
+            this.spawnTimer = -0.35;
+          } else if (r < 0.68) {
+            this.items.push({ type: 'Cl', x: chosenLane, y: -50, r: 21 });
+          } else {
+            this.obstacles.push(makeRock(chosenLane));
+          }
+        } else if (State.zone === 3) {
+          // NIVEL 3: Aminoácidos CHON, Agua (H2O) e iones errantes
+          const r = Math.random();
+          if (r < 0.55) {
+            this.chonPortals.push({
+              x: chosenLane,
+              y: -90,
+              r: 46,
+              rot: 0,
+              scored: false,
+              atoms: ['C', 'H', 'O', 'N', 'C', 'H']
+            });
+          } else if (r < 0.82) {
+            this.items.push({ type: 'H2O', x: chosenLane, y: -50, r: 20 });
+          } else {
+            this.obstacles.push(makeIon(chosenLane, true));
+          }
+        } else {
+          // ==================================================================
+          // NIVEL 4 FINAL: ¡AQUÍ APARECEN LOS CRUSTÁCEOS!
+          // ==================================================================
+          const otherLanes = laneX.filter(l => l !== chosenLane);
+          const crLane = otherLanes[Math.floor(Math.random() * otherLanes.length)];
+
+          if (Math.random() < 0.65) {
+            this.crustaceans.push({ x: crLane, y: -70, r: 30 });
+          }
+
+          if (Math.random() < 0.55) {
+            this.warnings.push({ x: chosenLane, t: 1.0 });
+            audio.playWarning();
+          } else {
+            this.items.push({ type: 'Cl', x: chosenLane, y: -50, r: 21 });
+          }
+        }
+      },
+
+      spawnCrystalPattern() {
+        const lanes = this.laneX();
+        let li = Math.floor(Math.random() * 3);
+        if (li === this.lastObLane) li = (li + 1 + Math.floor(Math.random() * 2)) % 3;
+        const r = Math.random();
+        if (r < 0.45) {
+          // Línea recta
+          for (let k = 0; k < 6; k++) this.crystals.push({ x: lanes[li], y: -30 - k * 38, rot: k * 0.4 });
+        } else if (r < 0.78) {
+          // Arco que cambia de carril
+          const lj = li === 1 ? (Math.random() < 0.5 ? 0 : 2) : 1;
+          for (let k = 0; k < 8; k++) {
+            const t = k / 7;
+            const x = lanes[li] + (lanes[lj] - lanes[li]) * (0.5 - 0.5 * Math.cos(t * Math.PI));
+            this.crystals.push({ x, y: -30 - k * 36, rot: k * 0.4 });
+          }
+        } else {
+          // Zigzag ondulado
+          for (let k = 0; k < 10; k++) {
+            this.crystals.push({ x: W * 0.5 + Math.sin(k * 0.7) * W * 0.28, y: -30 - k * 34, rot: k * 0.4 });
+          }
+        }
+      },
+
+      spawnPowerup() {
+        const lanes = this.laneX();
+        const types = ['magnet', 'double', 'slow', 'rocket', 'life'];
+        const weights = [3, 3, 2, 2.2, Fun.extraLife >= 2 ? 0 : 1.6];
+        const total = weights.reduce((a, b) => a + b, 0);
+        let roll = Math.random() * total;
+        let type = types[0];
+        for (let i = 0; i < types.length; i++) {
+          roll -= weights[i];
+          if (roll <= 0) { type = types[i]; break; }
+        }
+        let li = Math.floor(Math.random() * 3);
+        if (li === this.lastObLane) li = (li + 1) % 3;
+        this.powerups.push({ type, x: lanes[li], y: -60, ph: 0 });
+      },
+
+      draw(ctx) {
+        // ====================================================================
+        // FONDO SUBMARINO CON FOTOGRAFÍAS REALES DEL OCÉANO + ILUMINACIÓN 3D
+        // ====================================================================
+        const realImg = OceanImages[State.zone] || OceanImages[1];
+        if (realImg && realImg.complete && realImg.naturalWidth > 0) {
+          ctx.save();
+          // Desplazamiento continuo vertical de la fotografía submarina real
+          const sy = Math.floor(State.bgScrollY % H);
+          ctx.drawImage(realImg, 0, sy, W, H);
+          ctx.drawImage(realImg, 0, sy - H, W, H);
+
+          // Velo atmosférico submarino para que los átomos, crustáceos y nombres resalten con claridad total
+          const tintGrad = ctx.createLinearGradient(0, 0, 0, H);
+          if (State.zone === 1) {
+            tintGrad.addColorStop(0, 'rgba(2, 24, 58, 0.46)');
+            tintGrad.addColorStop(0.5, 'rgba(3, 32, 72, 0.56)');
+            tintGrad.addColorStop(1, 'rgba(2, 12, 34, 0.72)');
+          } else if (State.zone === 2) {
+            tintGrad.addColorStop(0, 'rgba(2, 36, 52, 0.50)');
+            tintGrad.addColorStop(0.5, 'rgba(4, 28, 58, 0.60)');
+            tintGrad.addColorStop(1, 'rgba(2, 12, 32, 0.74)');
+          } else if (State.zone === 3) {
+            tintGrad.addColorStop(0, 'rgba(22, 6, 48, 0.52)');
+            tintGrad.addColorStop(0.5, 'rgba(8, 20, 56, 0.62)');
+            tintGrad.addColorStop(1, 'rgba(3, 8, 28, 0.76)');
+          } else {
+            tintGrad.addColorStop(0, 'rgba(6, 28, 64, 0.45)');
+            tintGrad.addColorStop(0.5, 'rgba(12, 34, 76, 0.55)');
+            tintGrad.addColorStop(1, 'rgba(3, 12, 35, 0.72)');
+          }
+          ctx.fillStyle = tintGrad;
+          ctx.fillRect(0, 0, W, H);
+          ctx.restore();
+        } else {
+          // Respaldo de gradiente oceánico profundo si no hay conexión a internet
+          const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+          bgGrad.addColorStop(0, '#041b46');
+          bgGrad.addColorStop(0.5, '#07285f');
+          bgGrad.addColorStop(1, '#020b22');
+          ctx.fillStyle = bgGrad;
+          ctx.fillRect(0, 0, W, H);
+        }
+
+        drawDecorations(ctx);
+
+        // Burbujas submarinas brillantes en 3D
+        this.bgBubbles.forEach(b => {
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(180, 242, 255, 0.16)';
+          ctx.fill();
+          ctx.strokeStyle = 'rgba(120, 232, 255, 0.48)';
+          ctx.lineWidth = 1.4;
+          ctx.stroke();
+          // Reflejo de luz en cada burbuja
+          ctx.beginPath();
+          ctx.arc(b.x - b.r * 0.3, b.y - b.r * 0.3, b.r * 0.28, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+          ctx.fill();
+          ctx.restore();
+        });
+
+        // Cristales, power-ups, alertas y ondas
+        Fun.drawPickups(ctx);
+
+        // Dibujar crustáceos libres (Exclusivos del nivel final - Etapa 4)
+        this.crustaceans.forEach(cr => {
+          drawCrustacean(ctx, cr.x, cr.y, 1.05, false);
+        });
+
+        // Ítems recolectables: AGUA (H₂O) y CLORURO (Cl⁻) con nombres súper claros
+        this.items.forEach(it => {
+          ctx.save();
+          ctx.translate(it.x, it.y);
+          if (it.type === 'H2O') {
+            // Dos esferas blancas de Hidrógeno (H) arriba
+            [[-14, -11], [14, -11]].forEach(([hx, hy]) => {
+              const gh = ctx.createRadialGradient(hx - 2, hy - 2, 1, hx, hy, 10);
+              gh.addColorStop(0, '#ffffff');
+              gh.addColorStop(1, '#cbd5e1');
+              ctx.fillStyle = gh;
+              ctx.beginPath();
+              ctx.arc(hx, hy, 10, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.strokeStyle = '#020b1e';
+              ctx.lineWidth = 2.5;
+              ctx.stroke();
+              drawOutlinedFormula(ctx, 'H', hx, hy + 0.5, 10, '#020b1e', '#ffffff', 2);
+            });
+
+            // Esfera central azul de Oxígeno (H₂O)
+            const g = ctx.createRadialGradient(-5, -5, 2, 0, 0, it.r);
+            g.addColorStop(0, '#ffffff');
+            g.addColorStop(0.35, '#22b8ff');
+            g.addColorStop(1, '#0044aa');
+            ctx.fillStyle = g;
+            ctx.beginPath();
+            ctx.arc(0, 0, it.r, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#020b1e';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            drawOutlinedFormula(ctx, 'H₂O', 0, 1, 13, '#ffffff', '#011638', 3.5);
+            drawClearBadge(ctx, 0, it.r + 14, '💧 AGUA (H₂O)', '#00d9ff', 'rgba(2, 12, 32, 0.92)', 10.5, '#d0f4ff');
+          } else if (it.type === 'Cl') {
+            // Halo verde amigo Cloruro
+            ctx.beginPath();
+            ctx.arc(0, 0, it.r + 6, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(0, 255, 170, 0.45)';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([4, 4]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            const g = ctx.createRadialGradient(-5, -5, 2, 0, 0, it.r);
+            g.addColorStop(0, '#ffffff');
+            g.addColorStop(0.35, '#00ffaa');
+            g.addColorStop(0.85, '#008855');
+            g.addColorStop(1, '#003d22');
+            ctx.fillStyle = g;
+            ctx.beginPath();
+            ctx.arc(0, 0, it.r, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#020b1e';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            drawOutlinedFormula(ctx, 'Cl⁻', 0, 1, 15, '#ffffff', '#002b19', 3.5);
+            drawClearBadge(ctx, 0, it.r + 14, '🧪 CLORURO (Cl⁻)', '#00ffaa', 'rgba(2, 20, 14, 0.92)', 10.5, '#b8ffe0');
+          }
+          ctx.restore();
+        });
+
+        // Obstáculos: SODIO (Na⁺), POTASIO (K⁺), ROCA DE SAL y GRAN DEPREDADOR con nombres claros
+        this.obstacles.forEach(ob => {
+          ctx.save();
+          ctx.translate(ob.x, ob.y);
+
+          if (ob.type === 'NA' || ob.type === 'K') {
+            // Picos de repulsión iónica alrededor de Sodio y Potasio
+            ctx.strokeStyle = ob.color;
+            ctx.lineWidth = 2.5;
+            for (let k = 0; k < 8; k++) {
+              const ang = (k / 8) * Math.PI * 2 + Date.now() * 0.004;
+              ctx.beginPath();
+              ctx.moveTo(Math.cos(ang) * ob.r, Math.sin(ang) * ob.r);
+              ctx.lineTo(Math.cos(ang) * (ob.r + 7), Math.sin(ang) * (ob.r + 7));
+              ctx.stroke();
+            }
+
+            const bg = ctx.createRadialGradient(-5, -6, 2, 0, 0, ob.r);
+            bg.addColorStop(0, '#ffffff');
+            bg.addColorStop(0.35, ob.color);
+            bg.addColorStop(0.85, ob.type === 'NA' ? '#c94a00' : '#701a99');
+            bg.addColorStop(1, '#1a0526');
+            ctx.fillStyle = bg;
+            ctx.beginPath();
+            ctx.arc(0, 0, ob.r, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#020b1e';
+            ctx.lineWidth = 3.5;
+            ctx.stroke();
+
+            // Brillo cristalino
+            ctx.fillStyle = 'rgba(255,255,255,0.38)';
+            ctx.beginPath();
+            ctx.ellipse(-6, -8, 7, 4, -0.4, 0, Math.PI * 2);
+            ctx.fill();
+
+            drawOutlinedFormula(ctx, ob.name, 0, 1, 16, '#ffffff', '#1a0526', 4);
+            drawClearBadge(ctx, 0, ob.r + 15, `⚡ ${ob.fullName}`, ob.color, 'rgba(18, 6, 24, 0.94)', 10.5, '#ffffff');
+          } else if (ob.type === 'ROCK') {
+            // Roca costera facetada en 3D con cristales de sal
+            const rg = ctx.createLinearGradient(-ob.r, -ob.r, ob.r, ob.r);
+            rg.addColorStop(0, '#94a3b8');
+            rg.addColorStop(0.5, '#475569');
+            rg.addColorStop(1, '#1e293b');
+            ctx.fillStyle = rg;
+            ctx.strokeStyle = '#020b1e';
+            ctx.lineWidth = 3.5;
+            ctx.beginPath();
+            ctx.moveTo(-ob.r * 0.85, -ob.r * 0.3);
+            ctx.lineTo(-ob.r * 0.35, -ob.r * 0.95);
+            ctx.lineTo(ob.r * 0.5, -ob.r * 0.85);
+            ctx.lineTo(ob.r * 0.98, -ob.r * 0.15);
+            ctx.lineTo(ob.r * 0.72, ob.r * 0.82);
+            ctx.lineTo(-ob.r * 0.45, ob.r * 0.92);
+            ctx.lineTo(-ob.r * 0.95, ob.r * 0.35);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // Cristales blancos de sal incrustados en la roca
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+            ctx.beginPath();
+            ctx.moveTo(-8, -10); ctx.lineTo(0, -18); ctx.lineTo(8, -8); ctx.lineTo(0, -4);
+            ctx.closePath();
+            ctx.fill();
+
+            drawClearBadge(ctx, 0, ob.r + 15, '🪨 ROCA DE SAL', '#94a3b8', 'rgba(15, 23, 42, 0.94)', 10.5, '#e2e8f0');
+          } else {
+            // GRAN DEPREDADOR MARINO (🦈 Etapa 4)
+            ctx.beginPath();
+            ctx.arc(0, 0, ob.r + 5, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(255, 42, 85, 0.6)';
+            ctx.lineWidth = 2.5;
+            ctx.setLineDash([6, 4]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            const sg = ctx.createRadialGradient(-5, -5, 2, 0, 0, ob.r);
+            sg.addColorStop(0, '#ff758f');
+            sg.addColorStop(0.5, '#c9184a');
+            sg.addColorStop(1, '#3c0919');
+            ctx.fillStyle = sg;
+            ctx.beginPath();
+            ctx.arc(0, 0, ob.r, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#020b1e';
+            ctx.lineWidth = 3.5;
+            ctx.stroke();
+
+            ctx.font = '28px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('🦈', 0, 2);
+
+            drawClearBadge(ctx, 0, ob.r + 16, '🦈 GRAN DEPREDADOR', '#ff2a55', 'rgba(35, 4, 15, 0.95)', 10.5, '#ffb3c1');
+          }
+          ctx.restore();
+        });
+
+        // CHON Portales (Macromoléculas de aminoácidos)
+        this.chonPortals.forEach(ch => {
+          drawChonMolecule(ctx, ch.x, ch.y, ch.r, ch.rot, ch.atoms, ch.scored);
+        });
+
+        // Partículas (Chispas y Burbujas Turbo)
+        this.particles.forEach(p => {
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, p.alpha);
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        });
+
+        // Textos flotantes
+        this.floatingTexts.forEach(ft => {
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, ft.life);
+          drawOutlinedFormula(ctx, ft.text, Math.max(95, Math.min(W - 95, ft.x)), ft.y, 14 * (ft.scale || 1), ft.color, '#010816', 4);
+          ctx.restore();
+        });
+
+        // Cartel anunciador de Etapa en la parte superior del Canvas
+        if (State.bannerTimer > 0) {
+          ctx.save();
+          const alpha = Math.min(1, State.bannerTimer * 1.5);
+          ctx.globalAlpha = alpha;
+          const bw = Math.min(W - 28, 370);
+          const bh = 62;
+          const bx = (W - bw) / 2;
+          const by = 148;
+
+          ctx.shadowColor = State.bannerColor;
+          ctx.shadowBlur = 18;
+          ctx.fillStyle = 'rgba(3, 12, 32, 0.95)';
+          ctx.beginPath();
+          ctx.roundRect(bx, by, bw, bh, 18);
+          ctx.fill();
+          ctx.shadowBlur = 0;
+          ctx.strokeStyle = State.bannerColor;
+          ctx.lineWidth = 3;
+          ctx.stroke();
+
+          drawOutlinedFormula(ctx, State.bannerText, W / 2, by + 22, 14, State.bannerColor, '#010612', 3.5);
+          ctx.font = '800 11px "Fredoka", sans-serif';
+          ctx.fillStyle = '#e2f1ff';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(State.bannerSub, W / 2, by + 44);
+          ctx.restore();
+        }
+      }
+    };
+
+    /* ==========================================================================
+       DIBUJO VECTORIAL DEL CRUSTÁCEO (EXCLUSIVO DE LA ETAPA 4 FINAL, PÁG. 24)
+       ========================================================================== */
+    function drawCrustacean(ctx, x, y, scale = 1, isRidden = false) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.scale(scale, scale);
+
+      const t = Date.now() * 0.012;
+      const legWiggle = Math.sin(t) * 4;
+
+      // Halo resplandeciente dorado
+      const halo = ctx.createRadialGradient(0, 0, 5, 0, 0, 40);
+      halo.addColorStop(0, 'rgba(255, 160, 40, 0.65)');
+      halo.addColorStop(0.7, 'rgba(255, 190, 0, 0.22)');
+      halo.addColorStop(1, 'transparent');
+      ctx.fillStyle = halo;
+      ctx.beginPath();
+      ctx.arc(0, 0, 40, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Anillo de interacción punteado si está libre en el agua
+      if (!isRidden) {
+        ctx.beginPath();
+        ctx.arc(0, 0, 34, 0, Math.PI * 2);
+        ctx.strokeStyle = '#ffd166';
+        ctx.lineWidth = 2.5;
+        ctx.setLineDash([6, 5]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // Antenas largas curvadas hacia adelante
+      ctx.strokeStyle = '#ffb703';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(-6, -14);
+      ctx.quadraticCurveTo(-22, -32, -18, -48 + legWiggle * 0.5);
+      ctx.moveTo(6, -14);
+      ctx.quadraticCurveTo(22, -32, 18, -48 - legWiggle * 0.5);
+      ctx.stroke();
+
+      // Patitas nadadoras (pleópodos) a los costados
+      ctx.strokeStyle = '#fb8500';
+      ctx.lineWidth = 2.2;
+      for (let side of [-1, 1]) {
+        for (let i = 0; i < 4; i++) {
+          const py = -4 + i * 7;
+          ctx.beginPath();
+          ctx.moveTo(side * 14, py);
+          ctx.lineTo(side * (24 + (i % 2) * 3), py + 4 + (side === 1 ? legWiggle : -legWiggle));
+          ctx.stroke();
+        }
+      }
+
+      // Pinzas delanteras
+      ctx.fillStyle = '#ffb703';
+      ctx.strokeStyle = '#020817';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.ellipse(-16, -18, 5, 9, -0.4, 0, Math.PI * 2);
+      ctx.fill(); ctx.stroke();
+      ctx.beginPath();
+      ctx.ellipse(16, -18, 5, 9, 0.4, 0, Math.PI * 2);
+      ctx.fill(); ctx.stroke();
+
+      // Caparazón / Cefalotórax
+      const gCeph = ctx.createLinearGradient(0, -20, 0, 6);
+      gCeph.addColorStop(0, '#ffaa00');
+      gCeph.addColorStop(0.5, '#e85d04');
+      gCeph.addColorStop(1, '#dc2f02');
+      ctx.fillStyle = gCeph;
+      ctx.strokeStyle = '#020817';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.ellipse(0, -6, 16, 15, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Segmentos abdominales
+      const segments = [
+        { y: 8, rx: 13, ry: 6, col: '#e85d04' },
+        { y: 16, rx: 10, ry: 5, col: '#d00000' },
+        { y: 23, rx: 7, ry: 4, col: '#9d0208' }
+      ];
+      segments.forEach(seg => {
+        ctx.fillStyle = seg.col;
+        ctx.beginPath();
+        ctx.ellipse(0, seg.y, seg.rx, seg.ry, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+      });
+
+      // Cola en abanico (telson y urópodos)
+      ctx.fillStyle = '#ffb703';
+      ctx.beginPath();
+      ctx.moveTo(0, 26);
+      ctx.lineTo(-12, 38 + legWiggle * 0.3);
+      ctx.lineTo(0, 32);
+      ctx.lineTo(12, 38 - legWiggle * 0.3);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Ojos sobre pedúnculos
+      ctx.fillStyle = '#020817';
+      ctx.beginPath();
+      ctx.arc(-8, -19, 3.5, 0, Math.PI * 2);
+      ctx.arc(8, -19, 3.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Brillo blanco en los ojos
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(-9, -20, 1.3, 0, Math.PI * 2);
+      ctx.arc(7, -20, 1.3, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Etiqueta clara cuando nada en el nivel final
+      if (!isRidden) {
+        drawClearBadge(ctx, 0, 50, '🦐 CRUSTÁCEO · ¡MÓNTALO!', '#ffd166', 'rgba(35, 16, 0, 0.95)', 10.5, '#ffe066');
+      }
+
+      ctx.restore();
+    }
+
+    function createExplosion(x, y, color) {
+      for (let i = 0; i < 16; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const spd = 2 + Math.random() * 5;
+        World.particles.push({
+          x: x,
+          y: y,
+          vx: Math.cos(angle) * spd,
+          vy: Math.sin(angle) * spd,
+          r: 2 + Math.random() * 4,
+          alpha: 1,
+          color: color
+        });
+      }
+    }
+
+    /* ==========================================================================
+       6. DIBUJO DE CHON Y DECORACIONES CON NOMBRES ATÓMICOS CLAROS
+       ========================================================================== */
+    function drawChonMolecule(ctx, x, y, radius, rot, atomsArray, scored) {
+      ctx.save();
+      ctx.translate(x, y);
+
+      // Anillo exterior interactivo
+      ctx.beginPath();
+      ctx.arc(0, 0, radius * 1.62, 0, Math.PI * 2);
+      ctx.strokeStyle = scored ? '#00ffaa' : '#00d9ff';
+      ctx.lineWidth = 2.8;
+      ctx.setLineDash([8, 7]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      const count = atomsArray.length;
+      for (let i = 0; i < count; i++) {
+        const a = rot + (i / count) * Math.PI * 2;
+        const ox = Math.cos(a) * (radius * 0.98);
+        const oy = Math.sin(a) * (radius * 0.98);
+
+        ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(ox, oy);
+        ctx.strokeStyle = '#051b3d'; ctx.lineWidth = 7; ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(ox, oy);
+        ctx.strokeStyle = '#00d9ff'; ctx.lineWidth = 2.5; ctx.stroke();
+      }
+
+      for (let i = 0; i < count; i++) {
+        const a = rot + (i / count) * Math.PI * 2;
+        const ox = Math.cos(a) * (radius * 0.98);
+        const oy = Math.sin(a) * (radius * 0.98);
+        const atomType = atomsArray[i];
+
+        let col1 = '#64748b', col2 = '#1e293b';
+        if (atomType === 'H') { col1 = '#ffffff'; col2 = '#94a3b8'; }
+        else if (atomType === 'O') { col1 = '#ff3344'; col2 = '#990011'; }
+        else if (atomType === 'N') { col1 = '#228be6'; col2 = '#002277'; }
+
+        ctx.save();
+        ctx.translate(ox, oy);
+        const g = ctx.createRadialGradient(-4, -4, 2, 0, 0, 14);
+        g.addColorStop(0, '#ffffff'); g.addColorStop(0.35, col1); g.addColorStop(1, col2);
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(0, 0, 14, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#020b1e';
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+
+        drawOutlinedFormula(ctx, atomType, 0, 1, 13, '#ffffff', '#020b1e', 3.5);
+        ctx.restore();
+      }
+
+      // Núcleo Rosa CHON (Aminoácido)
+      const coreGrad = ctx.createRadialGradient(-6, -6, 4, 0, 0, radius * 0.54);
+      coreGrad.addColorStop(0, '#ffffff');
+      coreGrad.addColorStop(0.3, '#ff2a85');
+      coreGrad.addColorStop(1, '#880033');
+      ctx.fillStyle = coreGrad;
+      ctx.beginPath();
+      ctx.arc(0, 0, radius * 0.54, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#020b1e';
+      ctx.lineWidth = 3.5;
+      ctx.stroke();
+
+      drawOutlinedFormula(ctx, 'CHON', 0, 1, 15, '#ffffff', '#4a001f', 4);
+      drawClearBadge(ctx, 0, radius * 1.62 + 13, scored ? '✅ AMINOÁCIDO SUPERADO' : '🧬 AMINOÁCIDO (CHON)', scored ? '#00ffaa' : '#ff2a85', 'rgba(28, 4, 18, 0.94)', 10, '#ffd6e7');
+      ctx.restore();
+    }
+
+    function drawDecorations(ctx) {
+      const t = Date.now() * 0.0012;
+
+      // 1. RAYOS DE SOL SUBMARINOS (GOD RAYS VOLUMÉTRICOS DESDE LA SUPERFICIE)
+      ctx.save();
+      for (let i = 0; i < 4; i++) {
+        const sway = Math.sin(t + i * 1.3) * 28;
+        const topX = W * (0.15 + i * 0.24) + sway * 0.4;
+        const botX = topX + (i - 1.5) * 55 + sway;
+        const rayGrad = ctx.createLinearGradient(topX, 0, botX, H * 0.88);
+        rayGrad.addColorStop(0, 'rgba(130, 240, 255, 0.16)');
+        rayGrad.addColorStop(0.55, 'rgba(0, 217, 255, 0.06)');
+        rayGrad.addColorStop(1, 'transparent');
+
+        ctx.fillStyle = rayGrad;
+        ctx.beginPath();
+        ctx.moveTo(topX - 24, 0);
+        ctx.lineTo(topX + 24, 0);
+        ctx.lineTo(botX + 68, H * 0.88);
+        ctx.lineTo(botX - 68, H * 0.88);
+        ctx.closePath();
+        ctx.fill();
+      }
+      ctx.restore();
+
+      // 1b. VIDA MARINA EN PARALLAX (plancton, cardúmenes y medusas)
+      Ambient.draw(ctx);
+
+      // 2. CORALES Y ALGAS BIOLUMINISCENTES EN LOS COSTADOS DE LA PANTALLA MÓVIL
+      const scrollOff = State.bgScrollY || 0;
+      for (let k = 0; k < 4; k++) {
+        const rawY = ((k * (H * 0.28) + scrollOff) % (H + 120)) - 60;
+        const wave = Math.sin(t * 2.2 + k) * 9;
+
+        // Alga / Coral izquierdo
+        ctx.save();
+        ctx.translate(8, rawY);
+        ctx.strokeStyle = k % 2 === 0 ? 'rgba(0, 255, 170, 0.42)' : 'rgba(0, 217, 255, 0.42)';
+        ctx.lineWidth = 5;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(0, 35);
+        ctx.quadraticCurveTo(18 + wave, 10, 10 + wave * 1.2, -25);
+        ctx.stroke();
+        // Pólipo luminoso en la punta
+        ctx.fillStyle = k % 2 === 0 ? '#00ffaa' : '#00d9ff';
+        ctx.beginPath();
+        ctx.arc(10 + wave * 1.2, -25, 4.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+        // Alga / Coral derecho
+        ctx.save();
+        ctx.translate(W - 8, rawY + 45);
+        ctx.strokeStyle = k % 2 === 0 ? 'rgba(255, 110, 199, 0.42)' : 'rgba(255, 209, 102, 0.42)';
+        ctx.lineWidth = 5;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(0, 35);
+        ctx.quadraticCurveTo(-18 - wave, 10, -10 - wave * 1.2, -25);
+        ctx.stroke();
+        ctx.fillStyle = k % 2 === 0 ? '#ff6ec7' : '#ffd166';
+        ctx.beginPath();
+        ctx.arc(-10 - wave * 1.2, -25, 4.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // 3. CONSTELACIONES QUÍMICAS Y HÉLICE DE ADN EN EL FONDO
+      const constelations = [
+        { x: W * 0.14, y: H * 0.34, color: 'rgba(157, 78, 221, 0.55)', rot: 0.2 },
+        { x: W * 0.86, y: H * 0.25, color: 'rgba(0, 217, 255, 0.55)', rot: -0.4 }
+      ];
+      constelations.forEach(c => {
+        ctx.save();
+        ctx.translate(c.x, c.y); ctx.rotate(c.rot);
+        ctx.strokeStyle = c.color; ctx.lineWidth = 2.2;
+        ctx.beginPath(); ctx.moveTo(-16, -10); ctx.lineTo(16, -10); ctx.lineTo(20, 12); ctx.lineTo(-10, 12);
+        ctx.closePath(); ctx.stroke();
+        [[-16, -10], [16, -10], [20, 12], [-10, 12]].forEach(([vx, vy]) => {
+          ctx.beginPath(); ctx.arc(vx, vy, 4, 0, Math.PI * 2); ctx.fillStyle = c.color; ctx.fill();
+        });
+        ctx.restore();
+      });
+
+      // Doble hélice de ADN sutil a la derecha
+      ctx.save();
+      ctx.translate(W * 0.91, H * 0.82);
+      ctx.globalAlpha = 0.55;
+      for (let d = -26; d <= 26; d += 10) {
+        const span = Math.sin(d * 0.1 + t * 2) * 14;
+        ctx.strokeStyle = '#00d9ff'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(-span, d); ctx.lineTo(span, d); ctx.stroke();
+        ctx.fillStyle = '#9d4edd'; ctx.beginPath(); ctx.arc(-span, d, 3, 0, Math.PI * 2); ctx.arc(span, d, 3, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    /* ==========================================================================
+       7. TIENDA DE MEJORAS Y SKINS DE CALCIO (MOBILE-FIRST)
+       ========================================================================== */
+    let activeShopTab = 'upgrades'; // 'upgrades' | 'skins'
+
+    function openShop() {
+      audio.init();
+      if (State.running) {
+        State.running = false;
+        State.pausedByShop = true;
+      }
+      renderShop();
+      document.getElementById('shopModal').classList.remove('hidden');
+    }
+
+    function closeShop() {
+      document.getElementById('shopModal').classList.add('hidden');
+      updateWalletUI();
+      if (State.pausedByShop) {
+        State.pausedByShop = false;
+        State.running = true;
+      }
+    }
+
+    function renderShop() {
+      updateWalletUI();
+      const container = document.getElementById('shopItemsContainer');
+      container.innerHTML = '';
+
+      document.getElementById('tabBtnUpgrades').classList.toggle('active', activeShopTab === 'upgrades');
+      document.getElementById('tabBtnSkins').classList.toggle('active', activeShopTab === 'skins');
+
+      if (activeShopTab === 'upgrades') {
+        UPGRADES_CATALOG.forEach(upg => {
+          const curLvl = SaveData.upgrades[upg.id] || 0;
+          const isMax = curLvl >= upg.maxLevel;
+          const cost = Math.round(upg.baseCost * Math.pow(1.45, curLvl));
+          const canAfford = SaveData.walletPts >= cost;
+
+          let dotsHtml = '<div class="shop-level-dots">';
+          for (let i = 1; i <= upg.maxLevel; i++) {
+            dotsHtml += `<div class="lvl-dot ${i <= curLvl ? 'filled' : ''}"></div>`;
+          }
+          dotsHtml += '</div>';
+
+          const itemEl = document.createElement('div');
+          itemEl.className = 'shop-item';
+          itemEl.innerHTML = `
+            <div class="shop-icon-preview" style="background: radial-gradient(circle at 30% 30%, #1e40af, #020b24);">${upg.icon}</div>
+            <div class="shop-item-info">
+              <div class="shop-item-title">${upg.name} <span style="font-size:0.7rem;color:#00ffaa;">(Nv.${curLvl}/${upg.maxLevel})</span></div>
+              <div class="shop-item-desc">${upg.desc}</div>
+              ${dotsHtml}
+            </div>
+            <button class="btn-buy-item ${isMax ? 'equipped-btn' : 'gold'}" ${isMax || !canAfford ? 'disabled' : ''}>
+              ${isMax ? 'MÁXIMO' : `💰 ${cost}`}
+            </button>
+          `;
+
+          const btn = itemEl.querySelector('button');
+          if (!isMax) {
+            btn.addEventListener('click', () => {
+              if (SaveData.walletPts >= cost) {
+                SaveData.walletPts -= cost;
+                SaveData.upgrades[upg.id] = curLvl + 1;
+                SaveData.save();
+                audio.playShield();
+                renderShop();
+              }
+            });
+          }
+          container.appendChild(itemEl);
+        });
+      } else {
+        SKINS_CATALOG.forEach(skin => {
+          const isUnlocked = SaveData.unlockedSkins.includes(skin.id);
+          const isEquipped = SaveData.equippedSkin === skin.id;
+          const canAfford = SaveData.walletPts >= skin.price;
+
+          const itemEl = document.createElement('div');
+          itemEl.className = `shop-item ${isEquipped ? 'equipped' : ''}`;
+          itemEl.innerHTML = `
+            <div class="shop-icon-preview" style="background: radial-gradient(circle at 32% 30%, ${skin.c0}, ${skin.c1}, ${skin.c2}); border-color: ${skin.ringColor}; box-shadow: 0 0 12px ${skin.haloRgba};">
+              ${skin.icon}
+            </div>
+            <div class="shop-item-info">
+              <div class="shop-item-title">${skin.name}</div>
+              <div class="shop-item-desc">${skin.desc}</div>
+            </div>
+            <button class="btn-buy-item ${isEquipped ? 'equipped-btn' : (!isUnlocked ? 'gold' : '')}" ${(!isUnlocked && !canAfford) ? 'disabled' : ''}>
+              ${isEquipped ? '✓ USANDO' : (isUnlocked ? 'EQUIPAR' : `💰 ${skin.price}`)}
+            </button>
+          `;
+
+          const btn = itemEl.querySelector('button');
+          btn.addEventListener('click', () => {
+            if (isUnlocked) {
+              SaveData.equippedSkin = skin.id;
+              SaveData.save();
+              audio.playCollect();
+              renderShop();
+            } else if (SaveData.walletPts >= skin.price) {
+              SaveData.walletPts -= skin.price;
+              SaveData.unlockedSkins.push(skin.id);
+              SaveData.equippedSkin = skin.id;
+              SaveData.save();
+              audio.playCrustaceanRide();
+              renderShop();
+            }
+          });
+          container.appendChild(itemEl);
+        });
+      }
+    }
+
+    /* ==========================================================================
+       8. COLISIÓN, VICTORIA EN CRUSTÁCEO, RESULTADOS Y NAVEGACIÓN DE ETAPAS
+       ========================================================================== */
+    function randomFact() {
+      return FUN_FACTS[Math.floor(Math.random() * FUN_FACTS.length)];
+    }
+
+    function buildRunStatsHTML(stars, isRecord) {
+      const starHtml = [0, 1, 2].map(i => `<span class="${i < stars ? '' : 'off'}">⭐</span>`).join('');
+      return `
+        <div class="star-row">${starHtml}</div>
+        ${isRecord ? '<div class="new-record">🏆 ¡NUEVO RÉCORD DE DISTANCIA!</div>' : ''}
+        <div class="run-stats-grid">
+          <div class="run-stat"><b>${Math.floor(State.distance)} m</b>📏 Distancia</div>
+          <div class="run-stat"><b>${State.score}</b>⭐ Puntos</div>
+          <div class="run-stat"><b style="color:#ffd166;">+${Fun.run.earned}</b>💰 Ganados</div>
+          <div class="run-stat"><b>${Fun.run.crystals}</b>💎 Cristales</div>
+          <div class="run-stat"><b>x${Fun.maxCombo}</b>🔥 Combo máx.</div>
+          <div class="run-stat"><b>${Fun.run.nearMiss}</b>😎 Esquives</div>
+          <div class="run-stat"><b>${Fun.run.h2o}</b>💧 Agua</div>
+          <div class="run-stat"><b>${Fun.run.cl}</b>🧪 Cloruros</div>
+          <div class="run-stat"><b>${Fun.run.crustaceans}</b>🦐 Paseos</div>
+        </div>
+        <div class="fun-fact"><b>📘 ¿Sabías que…?</b> ${randomFact()}</div>
+      `;
+    }
+
+    function saveBests() {
+      let isRecord = false;
+      if (State.distance > State.bestDistance) {
+        isRecord = State.bestDistance > 0;
+        State.bestDistance = Math.floor(State.distance);
+        SaveData.bestDist = State.bestDistance;
+      }
+      if (State.score > State.bestScore) {
+        State.bestScore = State.score;
+        SaveData.bestScore = State.bestScore;
+      }
+      SaveData.save();
+      updateWalletUI();
+      return isRecord;
+    }
+
+    function triggerCrash() {
+      State.running = false;
+      audio.playCrash();
+      Fun.shake = 18;
+      Fun.flash('#ff2a55', 0.55);
+      buzz([90, 40, 160]);
+      createExplosion(Player.x, Player.y, '#ff2a55');
+      createExplosion(Player.x, Player.y, '#ffffff');
+
+      const isRecord = saveBests();
+      const stageNames = {
+        1: 'Nivel 1 · Agua (H₂O)',
+        2: 'Nivel 2 · Cloruros (Cl⁻)',
+        3: 'Nivel 3 · Aminoácidos (CHON)',
+        4: 'Nivel 4 Final · ¡Crustáceos!'
+      };
+      const stars = Math.min(3, Math.max(0, State.zone - 1));
+
+      document.getElementById('crashStatsText').innerHTML = `
+        <div style="font-size:0.82rem; font-weight:800; color:#cfe8ff;">📍 ${stageNames[State.zone]} (${State.stageCollected}/${STAGE_GOALS[State.zone]} recolectados)</div>
+        ${buildRunStatsHTML(stars, isRecord)}
+      `;
+
+      // Botón de revivir (máximo 2 veces por partida, cada vez más caro)
+      const reviveBtn = document.getElementById('btnRevive');
+      const cost = 300 * (State.revivesUsed + 1);
+      if (State.revivesUsed >= 2) {
+        reviveBtn.classList.add('hidden');
+      } else {
+        reviveBtn.classList.remove('hidden');
+        reviveBtn.disabled = SaveData.walletPts < cost;
+        reviveBtn.innerHTML = `💖 REVIVIR Y SEGUIR (💰 ${cost})`;
+      }
+
+      // Pequeña pausa para que se vea la explosión y el temblor
+      setTimeout(() => {
+        if (!State.running) document.getElementById('crashModal').classList.remove('hidden');
+      }, 650);
+    }
+
+    function triggerVictory() {
+      State.running = false;
+      audio.playCrustaceanRide();
+      Fun.flash('#ffd166', 0.6);
+      buzz([60, 40, 60, 40, 120]);
+
+      const victoryBonus = 800;
+      SaveData.walletPts += victoryBonus;
+      Fun.run.earned += victoryBonus;
+      const isRecord = saveBests();
+
+      document.getElementById('victoryStatsText').innerHTML = `
+        <b>¡Completaste los 4 Niveles del Capítulo 2!</b> Bono de victoria: <b style="color:#ffd166;">+${victoryBonus} 💰</b><br>
+        <i>«Al final del nivel, Calcio y sus dos amigos Cloruro se pegaron a los pequeños crustáceos 🦐 para dar un paseo y escaparon del gran depredador por la corriente térmica ascendente.»</i>
+      `;
+      document.getElementById('victoryRunStats').innerHTML = buildRunStatsHTML(3, isRecord);
+      document.getElementById('victoryModal').classList.remove('hidden');
+    }
+
+    /* ==========================================================================
+       8b. INTRODUCCIÓN CINEMATOGRÁFICA: CALCIO CAYENDO A LA TIERRA Y AL OCÉANO
+       ========================================================================== */
+    const IntroCutscene = {
+      active: false,
+      t: 0,
+      duration: 8.6,
+      splashed: false,
+      whooshed: false,
+      stars: [],
+      clouds: [],
+      splashDrops: [],
+
+      start() {
+        this.active = true;
+        this.t = 0;
+        this.splashed = false;
+        this.whooshed = false;
+        this.stars = Array.from({ length: 65 }, () => ({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          r: 0.8 + Math.random() * 2.2,
+          spd: 1.5 + Math.random() * 3.5,
+          tw: Math.random() * 6
+        }));
+        this.clouds = Array.from({ length: 9 }, (_, i) => ({
+          x: (i % 3) * (W * 0.42) + Math.random() * 60,
+          y: H * 0.2 + i * 95,
+          w: 110 + Math.random() * 90,
+          h: 36 + Math.random() * 22,
+          spd: 5 + Math.random() * 4
+        }));
+        this.splashDrops = [];
+        document.getElementById('introOverlay').classList.remove('hidden');
+        document.getElementById('runnerHUD').style.display = 'none';
+        audio.tone(330, 0.9, 'sine', 0.08, 0, 520);
+      },
+
+      finish() {
+        if (!this.active) return;
+        this.active = false;
+        document.getElementById('introOverlay').classList.add('hidden');
+        document.getElementById('runnerHUD').style.display = 'flex';
+        Player.x = W / 2;
+        Player.targetX = W / 2;
+        Player.y = H * 0.73;
+        State.countdown = 3.0;
+        State.goTimer = 0;
+        State.running = true;
+        audio.playCount(false);
+      },
+
+      update() {
+        const dt = 0.016;
+        this.t += dt;
+        Player.rot += 0.065;
+
+        // Sonido de entrada a la atmósfera como meteorito
+        if (this.t >= 2.7 && !this.whooshed) {
+          this.whooshed = true;
+          audio.playWhoosh();
+        }
+
+        // ¡Impacto en el océano a los 5.5 segundos!
+        if (this.t >= 5.5 && !this.splashed) {
+          this.splashed = true;
+          audio.playCrustaceanRide();
+          audio.tone(140, 0.55, 'sawtooth', 0.16, 0, 45);
+          Fun.flash('#7df9ff', 0.65);
+          Fun.shake = 14;
+          buzz([50, 30, 90]);
+          // Crear chorros de espuma y burbujas de impacto
+          for (let i = 0; i < 48; i++) {
+            const ang = -Math.PI * 0.1 - Math.random() * Math.PI * 0.8;
+            const spd = 3 + Math.random() * 10;
+            this.splashDrops.push({
+              x: W / 2 + (Math.random() - 0.5) * 40,
+              y: H * 0.52,
+              vx: Math.cos(ang) * spd,
+              vy: Math.sin(ang) * spd - 2,
+              r: 3 + Math.random() * 6,
+              bubble: i % 2 === 0,
+              alpha: 1
+            });
+          }
+        }
+
+        // Actualizar gotas y burbujas del chapuzón
+        for (let i = this.splashDrops.length - 1; i >= 0; i--) {
+          const d = this.splashDrops[i];
+          d.x += d.vx;
+          d.y += d.vy;
+          if (d.bubble) {
+            d.vy -= 0.12; // Las burbujas suben bajo el agua
+          } else {
+            d.vy += 0.32; // Las gotas caen por gravedad
+          }
+          d.alpha -= 0.012;
+          if (d.alpha <= 0) this.splashDrops.splice(i, 1);
+        }
+
+        if (this.t >= this.duration) {
+          this.finish();
+        }
+      },
+
+      draw(ctx) {
+        const t = this.t;
+
+        if (t < 2.8) {
+          // ==================================================================
+          // ACTO 1 (0.0s - 2.8s): DEL ESPACIO PROFUNDO HACIA EL PLANETA TIERRA
+          // ==================================================================
+          const p = t / 2.8;
+          const spGrad = ctx.createLinearGradient(0, 0, 0, H);
+          spGrad.addColorStop(0, '#02010a');
+          spGrad.addColorStop(0.55, '#090524');
+          spGrad.addColorStop(1, '#041f4a');
+          ctx.fillStyle = spGrad;
+          ctx.fillRect(0, 0, W, H);
+
+          // Nebulosa de Supernova arriba
+          const neb = ctx.createRadialGradient(W * 0.5, H * 0.16, 10, W * 0.5, H * 0.16, W * 0.65);
+          neb.addColorStop(0, 'rgba(255, 110, 199, 0.35)');
+          neb.addColorStop(0.5, 'rgba(114, 9, 183, 0.18)');
+          neb.addColorStop(1, 'transparent');
+          ctx.fillStyle = neb;
+          ctx.fillRect(0, 0, W, H);
+
+          // Estrellas desplazándose hacia arriba mientras Calcio cae
+          this.stars.forEach(s => {
+            s.y -= s.spd * (1 + p * 2.5);
+            if (s.y < 0) { s.y = H; s.x = Math.random() * W; }
+            ctx.fillStyle = `rgba(255, 255, 255, ${0.4 + Math.abs(Math.sin(t * 4 + s.tw)) * 0.6})`;
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+            ctx.fill();
+          });
+
+          // Planeta Tierra azul creciendo abajo a medida que Calcio se acerca
+          const earthR = W * (0.65 + p * 0.55);
+          const earthY = H + earthR * (0.52 - p * 0.32);
+          ctx.save();
+          // Resplandor atmosférico de la Tierra
+          const atm = ctx.createRadialGradient(W / 2, earthY, earthR * 0.92, W / 2, earthY, earthR * 1.12);
+          atm.addColorStop(0, 'rgba(0, 217, 255, 0.75)');
+          atm.addColorStop(0.5, 'rgba(0, 119, 255, 0.25)');
+          atm.addColorStop(1, 'transparent');
+          ctx.fillStyle = atm;
+          ctx.beginPath();
+          ctx.arc(W / 2, earthY, earthR * 1.12, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Océano global de la Tierra
+          const eg = ctx.createRadialGradient(W * 0.45, earthY - earthR * 0.6, earthR * 0.1, W / 2, earthY, earthR);
+          eg.addColorStop(0, '#38bdf8');
+          eg.addColorStop(0.45, '#0284c7');
+          eg.addColorStop(1, '#082f49');
+          ctx.fillStyle = eg;
+          ctx.beginPath();
+          ctx.arc(W / 2, earthY, earthR, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+
+          // Posición de Calcio cayendo desde el espacio hacia la Tierra
+          const cx = W / 2 + Math.sin(t * 2.5) * 14;
+          const cy = H * (0.16 + p * 0.34);
+          this.drawMeteorTail(ctx, cx, cy, '#ffd166', '#00d9ff', 85);
+          Player.x = cx;
+          Player.y = cy;
+          Player.draw(ctx);
+
+          this.drawCaption(ctx, '🌟 DEL CIELO A LA TIERRA', 'Tras nacer en una Supernova, Calcio viajó por el espacio hacia nuestro joven planeta azul...');
+        } else if (t < 5.5) {
+          // ==================================================================
+          // ACTO 2 (2.8s - 5.5s): CAYENDO POR EL CIELO Y LAS NUBES HACIA EL MAR
+          // ==================================================================
+          const p = (t - 2.8) / 2.7;
+          const skyGrad = ctx.createLinearGradient(0, 0, 0, H);
+          skyGrad.addColorStop(0, '#072252');
+          skyGrad.addColorStop(0.45, '#0284c7');
+          skyGrad.addColorStop(0.85, '#38bdf8');
+          skyGrad.addColorStop(1, '#bae6fd');
+          ctx.fillStyle = skyGrad;
+          ctx.fillRect(0, 0, W, H);
+
+          // Líneas de velocidad de caída libre
+          ctx.save();
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.38)';
+          ctx.lineWidth = 2;
+          for (let i = 0; i < 16; i++) {
+            const lx = (i * 73) % W;
+            const ly = H - ((t * 950 + i * 190) % (H + 140));
+            ctx.beginPath();
+            ctx.moveTo(lx, ly);
+            ctx.lineTo(lx, ly + 65);
+            ctx.stroke();
+          }
+          ctx.restore();
+
+          // Nubes pasando rápidamente hacia arriba mientras Calcio desciende
+          this.clouds.forEach(c => {
+            c.y -= c.spd * 2.3;
+            if (c.y < -80) {
+              c.y = H + 60;
+              c.x = Math.random() * W;
+            }
+            ctx.save();
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
+            ctx.beginPath();
+            ctx.ellipse(c.x, c.y, c.w * 0.5, c.h * 0.5, 0, 0, Math.PI * 2);
+            ctx.ellipse(c.x - c.w * 0.28, c.y + 6, c.w * 0.35, c.h * 0.4, 0, 0, Math.PI * 2);
+            ctx.ellipse(c.x + c.w * 0.28, c.y + 6, c.w * 0.35, c.h * 0.4, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+          });
+
+          // El Océano aparece abajo subiendo al acercarse el impacto
+          if (p > 0.55) {
+            const seaProgress = (p - 0.55) / 0.45;
+            const seaY = H - seaProgress * (H * 0.48);
+            const seaGrad = ctx.createLinearGradient(0, seaY, 0, H);
+            seaGrad.addColorStop(0, '#00d9ff');
+            seaGrad.addColorStop(0.2, '#0066cc');
+            seaGrad.addColorStop(1, '#02183a');
+            ctx.fillStyle = seaGrad;
+            ctx.fillRect(0, seaY, W, H - seaY);
+
+            // Espuma de las olas en la superficie
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            for (let x = 0; x <= W; x += 20) {
+              const wy = seaY + Math.sin(x * 0.04 + t * 8) * 5;
+              if (x === 0) ctx.moveTo(x, wy);
+              else ctx.lineTo(x, wy);
+            }
+            ctx.stroke();
+          }
+
+          // Calcio envuelto en fuego atmosférico cayendo al mar
+          const cx = W / 2 + Math.sin(t * 14) * 5;
+          const cy = H * (0.28 + p * 0.24);
+          this.drawMeteorTail(ctx, cx, cy, '#ff7b00', '#ffd166', 145);
+          Player.x = cx;
+          Player.y = cy;
+          Player.draw(ctx);
+
+          this.drawCaption(ctx, '☄️ CAYENDO A LA TIERRA', 'Atravesó la atmósfera ardiente como un meteoro directo hacia el inmenso océano...');
+        } else {
+          // ==================================================================
+          // ACTO 3 (5.5s - 8.6s): ¡CHAPUZÓN EN EL OCÉANO Y SUMERSIÓN!
+          // ==================================================================
+          const p = Math.min(1, (t - 5.5) / 3.1);
+          // El fondo ya es el océano real del Nivel 1
+          World.draw(ctx);
+
+          // La superficie del mar sube y desaparece por arriba mientras nos sumergimos
+          const surfaceY = H * 0.52 - p * (H * 0.65);
+          if (surfaceY > -40) {
+            const skyTop = ctx.createLinearGradient(0, 0, 0, Math.max(10, surfaceY));
+            skyTop.addColorStop(0, '#0284c7');
+            skyTop.addColorStop(1, '#bae6fd');
+            ctx.fillStyle = skyTop;
+            ctx.fillRect(0, 0, W, Math.max(0, surfaceY));
+
+            // Olas blancas de espuma en la línea de rotura del agua
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            for (let x = 0; x <= W; x += 18) {
+              const wy = surfaceY + Math.sin(x * 0.05 + t * 10) * 6;
+              if (x === 0) ctx.moveTo(x, wy);
+              else ctx.lineTo(x, wy);
+            }
+            ctx.stroke();
+          }
+
+          // Gotas de espuma y burbujas del gran chapuzón
+          this.splashDrops.forEach(d => {
+            ctx.save();
+            ctx.globalAlpha = Math.max(0, d.alpha);
+            if (d.bubble) {
+              ctx.strokeStyle = '#7df9ff';
+              ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+              ctx.lineWidth = 1.8;
+              ctx.beginPath();
+              ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.stroke();
+            } else {
+              ctx.fillStyle = '#ffffff';
+              ctx.beginPath();
+              ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+              ctx.fill();
+            }
+            ctx.restore();
+          });
+
+          // Calcio se sumerge suavemente hasta su posición de juego (H * 0.73)
+          const ease = 1 - Math.pow(1 - p, 3);
+          Player.x = W / 2;
+          Player.y = H * 0.52 + ease * (H * 0.73 - H * 0.52);
+          Player.draw(ctx);
+
+          this.drawCaption(ctx, '🌊 ¡ENTRADA AL OCÉANO!', '¡SPLASH! Calcio se sumergió en el mar, donde comenzaría la aventura de la vida.');
+        }
+      },
+
+      drawMeteorTail(ctx, x, y, colOuter, colInner, len) {
+        ctx.save();
+        const g = ctx.createLinearGradient(x, y, x, y - len);
+        g.addColorStop(0, colInner);
+        g.addColorStop(0.45, colOuter);
+        g.addColorStop(1, 'transparent');
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.moveTo(x - 28, y);
+        ctx.quadraticCurveTo(x, y - len * 1.15, x + 28, y);
+        ctx.closePath();
+        ctx.fill();
+
+        // Halo incandescente alrededor de Calcio al caer
+        const glow = ctx.createRadialGradient(x, y, 10, x, y, 52);
+        glow.addColorStop(0, 'rgba(255, 255, 255, 0.65)');
+        glow.addColorStop(0.5, 'rgba(255, 160, 0, 0.35)');
+        glow.addColorStop(1, 'transparent');
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(x, y, 52, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      },
+
+      drawCaption(ctx, title, text) {
+        ctx.save();
+        const boxW = Math.min(W - 28, 390);
+        const boxH = 74;
+        const bx = (W - boxW) / 2;
+        const by = H - boxH - 26;
+
+        ctx.fillStyle = 'rgba(2, 10, 28, 0.9)';
+        ctx.strokeStyle = '#00d9ff';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.roundRect(bx, by, boxW, boxH, 18);
+        ctx.fill();
+        ctx.stroke();
+
+        drawOutlinedFormula(ctx, title, W / 2, by + 22, 13.5, '#ffd166', '#010816', 3.5);
+
+        ctx.font = '800 11.5px "Fredoka", "Nunito", sans-serif';
+        ctx.fillStyle = '#e2f1ff';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        // Dividir en 2 líneas si es largo
+        const words = text.split(' ');
+        let line1 = '', line2 = '';
+        words.forEach(w => {
+          if ((line1 + w).length < 48) line1 += (line1 ? ' ' : '') + w;
+          else line2 += (line2 ? ' ' : '') + w;
+        });
+        if (line2) {
+          ctx.fillText(line1, W / 2, by + 44);
+          ctx.fillText(line2, W / 2, by + 60);
+        } else {
+          ctx.fillText(line1, W / 2, by + 50);
+        }
+        ctx.restore();
+      }
+    };
+
+    function startGame(startStage = 1, playIntro = false) {
+      audio.init();
+      audio.startMusic();
+      State.pausedByShop = false;
+      State.pausedByPause = false;
+      State.endlessMode = false;
+      State.score = 0;
+      State.speed = 4.3;
+      State.shieldTimer = 0;
+      State.surfTimer = 0;
+      State.invulnTimer = 0;
+      State.revivesUsed = 0;
+      State.hudZoneSet = false;
+      State.zone = startStage || 1;
+      State.stageCollected = 0;
+      State.distance = 0;
+      State.startDist = 0;
+      Player.x = W / 2;
+      Player.targetX = W / 2;
+      const bonusStartCl = (SaveData.upgrades.shield || 0) >= 2 ? 1 : 0;
+      Player.bondedCl = State.zone >= 3 ? 2 : bonusStartCl;
+      World.init();
+      Fun.resetRun();
+      Missions.ensure();
+
+      if (State.zone === 4) {
+        World.crustaceans.push({ x: W * 0.5, y: -40, r: 30 });
+      }
+
+      document.getElementById('menuScreen').classList.add('hidden');
+      document.getElementById('shopModal').classList.add('hidden');
+      document.getElementById('crashModal').classList.add('hidden');
+      document.getElementById('victoryModal').classList.add('hidden');
+      document.getElementById('pauseModal').classList.add('hidden');
+
+      if (playIntro) {
+        State.running = false;
+        IntroCutscene.start();
+      } else {
+        IntroCutscene.active = false;
+        document.getElementById('introOverlay').classList.add('hidden');
+        State.running = true;
+        State.countdown = 3.0;
+        State.goTimer = 0;
+        audio.playCount(false);
+        document.getElementById('runnerHUD').style.display = 'flex';
+      }
+    }
+
+    function revivePlayer() {
+      const cost = 300 * (State.revivesUsed + 1);
+      if (State.revivesUsed >= 2 || SaveData.walletPts < cost) return;
+      SaveData.walletPts -= cost;
+      State.revivesUsed++;
+      SaveData.save();
+      updateWalletUI();
+      // Despejar el peligro cercano
+      World.obstacles = World.obstacles.filter(o => o.y < H * 0.12);
+      World.chonPortals = World.chonPortals.filter(c => c.y < H * 0.05);
+      World.warnings = [];
+      State.invulnTimer = 3.0;
+      State.countdown = 0;
+      State.goTimer = 0.7;
+      State.running = true;
+      document.getElementById('crashModal').classList.add('hidden');
+      audio.playPowerUp();
+      Fun.flash('#ff6ec7', 0.5);
+      World.addRing(Player.x, Player.y, '#ff6ec7', 160);
+      World.floatingTexts.push({ text: '💖 ¡CALCIO REVIVE!', x: Player.x, y: Player.y - 80, life: 1.5, color: '#ff8fb8', scale: 1.9 });
+    }
+
+    function pauseGame() {
+      if (!State.running) return;
+      State.running = false;
+      State.pausedByPause = true;
+      document.getElementById('pauseFact').innerHTML = `<b>📘 ¿Sabías que…?</b> ${randomFact()}`;
+      document.getElementById('pauseModal').classList.remove('hidden');
+    }
+
+    function resumeGame() {
+      document.getElementById('pauseModal').classList.add('hidden');
+      if (State.pausedByPause) {
+        State.pausedByPause = false;
+        State.running = true;
+        State.countdown = Math.max(State.countdown, 2.0);
+        audio.playCount(false);
+      }
+    }
+
+    function returnToMenu() {
+      State.running = false;
+      State.pausedByShop = false;
+      State.pausedByPause = false;
+      IntroCutscene.active = false;
+      SaveData.save();
+      updateWalletUI();
+      Missions.render();
+      document.getElementById('introOverlay').classList.add('hidden');
+      document.getElementById('shopModal').classList.add('hidden');
+      document.getElementById('crashModal').classList.add('hidden');
+      document.getElementById('victoryModal').classList.add('hidden');
+      document.getElementById('pauseModal').classList.add('hidden');
+      document.getElementById('runnerHUD').style.display = 'none';
+      document.getElementById('menuScreen').classList.remove('hidden');
+    }
+
+    /* ==========================================================================
+       9. LOOP PRINCIPAL
+       ========================================================================== */
+    function gameLoop() {
+      if (IntroCutscene.active) {
+        IntroCutscene.update();
+        Fun.tickFX();
+        ctx.save();
+        if (Fun.shake > 0) {
+          ctx.translate((Math.random() - 0.5) * Fun.shake * 2, (Math.random() - 0.5) * Fun.shake * 2);
+        }
+        IntroCutscene.draw(ctx);
+        ctx.restore();
+        Fun.drawOverlay(ctx);
+        requestAnimationFrame(gameLoop);
+        return;
+      }
+
+      if (State.running) {
+        Player.update();
+        if (State.countdown > 0) {
+          const before = Math.ceil(State.countdown);
+          State.countdown -= 0.016;
+          const after = Math.ceil(State.countdown);
+          if (after !== before) {
+            audio.playCount(after <= 0);
+            if (after <= 0) State.goTimer = 0.7;
+          }
+          if (State.bannerTimer > 0 && State.countdown > 0) State.bannerTimer = Math.max(State.bannerTimer, 1);
+        } else {
+          if (State.goTimer > 0) State.goTimer -= 0.016;
+          World.update();
+        }
+        Ambient.update(State.countdown > 0 ? 0.5 : State.curSpeed);
+      } else if (!State.pausedByShop && !State.pausedByPause) {
+        // Mover suavemente el fondo marino real incluso en el menú
+        State.bgScrollY = (State.bgScrollY + 0.6) % H;
+        Ambient.update(0.6);
+        // Las partículas de la explosión siguen animándose tras el choque
+        for (let i = World.particles.length - 1; i >= 0; i--) {
+          const p = World.particles[i];
+          p.x += p.vx; p.y += p.vy; p.alpha -= 0.025;
+          if (p.alpha <= 0) World.particles.splice(i, 1);
+        }
+      }
+      Fun.tickFX();
+
+      ctx.save();
+      if (Fun.shake > 0) {
+        ctx.translate((Math.random() - 0.5) * Fun.shake * 2, (Math.random() - 0.5) * Fun.shake * 2);
+      }
+      World.draw(ctx);
+      const showPlayer = State.running || State.pausedByShop || State.pausedByPause;
+      if (showPlayer) {
+        Fun.drawPlayerFX(ctx);
+        const blink = State.invulnTimer > 0 && Math.floor(Date.now() / 90) % 2 === 0;
+        ctx.save();
+        if (blink) ctx.globalAlpha = 0.4;
+        Player.draw(ctx);
+        ctx.restore();
+      }
+      ctx.restore();
+      Fun.drawOverlay(ctx);
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    /* ==========================================================================
+       10. CONTROLES Y EVENTOS (MÓVIL Y ESCRITORIO)
+       ========================================================================== */
+    function handleTouch(cx) {
+      if (State.running) {
+        Player.targetX = cx;
+      }
+    }
+
+    window.addEventListener('pointerdown', e => {
+      audio.init();
+      handleTouch(e.clientX);
+    });
+
+    window.addEventListener('pointermove', e => {
+      handleTouch(e.clientX);
+    });
+
+    // Teclado (flechas / A-D) para jugar en computadora
+    window.addEventListener('keydown', e => {
+      if (!State.running) return;
+      const lanes = World.laneX();
+      let idx = lanes.reduce((best, lx, i) => Math.abs(lx - Player.targetX) < Math.abs(lanes[best] - Player.targetX) ? i : best, 0);
+      if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') idx = Math.max(0, idx - 1);
+      else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') idx = Math.min(2, idx + 1);
+      else if (e.key === 'Escape' || e.key === 'p') { pauseGame(); return; }
+      else return;
+      Player.targetX = lanes[idx];
+    });
+
+    // Pausa automática si el usuario cambia de app o bloquea el celular
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) pauseGame();
+    });
+
+    document.getElementById('btnPlayGame').addEventListener('click', () => {
+      startGame(1, true);
+    });
+
+    document.getElementById('btnSkipIntro').addEventListener('click', e => {
+      e.stopPropagation();
+      IntroCutscene.finish();
+    });
+
+    // Botones para abrir la Tienda de Mejoras y Skins desde cualquier pantalla
+    document.getElementById('btnOpenShopMenu').addEventListener('click', openShop);
+    document.getElementById('btnHudShop').addEventListener('click', e => {
+      e.stopPropagation();
+      openShop();
+    });
+    document.getElementById('btnVictoryShop').addEventListener('click', openShop);
+    document.getElementById('btnCrashShop').addEventListener('click', () => {
+      openShop();
+    });
+    document.getElementById('btnPauseShop').addEventListener('click', openShop);
+
+    document.getElementById('tabBtnUpgrades').addEventListener('click', () => {
+      activeShopTab = 'upgrades';
+      renderShop();
+    });
+    document.getElementById('tabBtnSkins').addEventListener('click', () => {
+      activeShopTab = 'skins';
+      renderShop();
+    });
+    document.getElementById('btnFreePts').addEventListener('click', () => {
+      SaveData.walletPts += 1000;
+      SaveData.save();
+      audio.playCrustaceanRide();
+      renderShop();
+    });
+    document.getElementById('btnCloseShop').addEventListener('click', () => {
+      closeShop();
+      // Actualizar el botón de revivir si se compró algo desde la pantalla de choque
+      const reviveBtn = document.getElementById('btnRevive');
+      const cost = 300 * (State.revivesUsed + 1);
+      if (reviveBtn) reviveBtn.disabled = SaveData.walletPts < cost;
+      Missions.render();
+    });
+
+    // Botones del menú para iniciar en cualquier etapa (incluida la Etapa 4 Final de los Crustáceos)
+    document.querySelectorAll('[data-start-stage]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const st = parseInt(btn.getAttribute('data-start-stage'), 10);
+        startGame(st);
+      });
+    });
+
+    // Píldoras del HUD superior para saltar entre etapas en vivo si el usuario lo desea
+    document.querySelectorAll('[data-jump-stage]').forEach(pill => {
+      pill.addEventListener('click', e => {
+        e.stopPropagation();
+        const st = parseInt(pill.getAttribute('data-jump-stage'), 10);
+        startGame(st);
+      });
+    });
+
+    document.getElementById('btnRestartGame').addEventListener('click', () => {
+      startGame(State.zone);
+    });
+
+    document.getElementById('btnRevive').addEventListener('click', revivePlayer);
+
+    document.getElementById('btnPause').addEventListener('click', e => {
+      e.stopPropagation();
+      pauseGame();
+    });
+    document.getElementById('btnResume').addEventListener('click', resumeGame);
+    document.getElementById('btnPauseMenu').addEventListener('click', returnToMenu);
+
+    document.getElementById('btnContinueEndless').addEventListener('click', () => {
+      document.getElementById('victoryModal').classList.add('hidden');
+      State.endlessMode = true;
+      State.running = true;
+      State.surfTimer = 10.0 + (SaveData.upgrades.crustacean || 0) * 2.5;
+      World.crustaceans.push({ x: W * 0.5, y: -50, r: 30 });
+    });
+
+    document.getElementById('btnVictoryMenu').addEventListener('click', () => {
+      returnToMenu();
+    });
+
+    document.getElementById('btnBackToMenu').addEventListener('click', () => {
+      returnToMenu();
+    });
+
+    document.getElementById('btnHomeMenu').addEventListener('click', () => {
+      returnToMenu();
+    });
+
+    document.getElementById('btnAudioToggle').addEventListener('click', () => {
+      audio.enabled = !audio.enabled;
+      document.getElementById('btnAudioToggle').textContent = audio.enabled ? '🔊' : '🔇';
+    });
+
+    Missions.render();
+    requestAnimationFrame(gameLoop);
+  </script>
+</body>
+</html>
